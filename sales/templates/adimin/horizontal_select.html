@@ -1,0 +1,20 @@
+<style>
+    .form-radio {
+        display: flex;
+        gap: 20px;
+    }
+    .form-radio .radio-inline {
+        margin-right: 15px;
+    }
+</style>
+
+
+<div class="form-radio">
+    {% for group, options, index in widget.optgroups %}
+        {% for option in options %}
+            <label class="radio-inline" for="{{ option.id_for_label }}">
+                {{ option.tag }} {{ option.label }}
+            </label>
+        {% endfor %}
+    {% endfor %}
+</div>

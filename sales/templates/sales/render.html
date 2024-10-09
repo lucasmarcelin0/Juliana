@@ -1,0 +1,285 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>Adicionar Imóvel</title>
+    <style>
+        .form-section {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        body {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Adicionar Imóvel</h2>
+        <form method="post" class="add-property-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            {% for field in form %}
+                <div class="form-section">
+                    <label class="form-label">{{ field.label_tag }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="text-danger">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Enviar</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Show/hide filter form on filter icon click
+    const filterButton = document.querySelector('.filter-button');
+    if (filterButton) {
+        filterButton.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default behavior of the button
+            const filterFormContainer = document.getElementById('filter-form-container');
+            filterFormContainer.classList.toggle('hidden');
+        });
+    }
+
+    // Handle AJAX filtering when clicking the "Apply Filters" button
+    const applyFiltersButton = document.getElementById('apply-filters');
+    if (applyFiltersButton) {
+        applyFiltersButton.addEventListener('click', function() {
+            // Get filter form data
+            const data = new URLSearchParams(new FormData(document.getElementById('filter-form'))).toString();
+
+            // Create an XMLHttpRequest
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', '/sales/filter_properties?' + data, true);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+            // When the response is received
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    // Replace the contents of the properties container with the response
+                    document.getElementById('properties-container').innerHTML = xhr.responseText;
+
+                    // Hide the filter form after filtering
+                    document.getElementById('filter-form-container').classList.add('hidden');
+
+                    // Reattach event listeners for "Ver mais detalhes" buttons
+                    addToggleDetailsEventListeners();
+                }
+            };
+
+            // Send the request
+            xhr.send();
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+    // Add event listeners for the "Ver mais detalhes" buttons
+    function addToggleDetailsEventListeners() {
+        const detailsButtons = document.querySelectorAll('.details-button');
+        detailsButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const extraInfo = this.nextElementSibling;
+
+                // Check if the next sibling is the extra info section
+                if (extraInfo && extraInfo.classList.contains('property-info-extra')) {
+                    if (extraInfo.style.display === "none" || extraInfo.style.display === "") {
+                        extraInfo.style.display = "block";
+                        this.innerText = "Ver menos detalhes";
+                    } else {
+                        extraInfo.style.display = "none";
+                        this.innerText = "Ver mais detalhes";
+                    }
+                }
+            });
+        });
+    }
+
+    // Initial setup: add event listeners to "Ver mais detalhes" buttons
+    addToggleDetailsEventListeners();
+});
+
+
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function toggleExtraInfo(element) {
+        const extraInfo = element.nextElementSibling;
+        if (extraInfo.style.display === "none" || extraInfo.style.display === "") {
+            extraInfo.style.display = "block";
+            element.innerText = "Ver menos detalhes";
+        } else {
+            extraInfo.style.display = "none";
+            element.innerText = "Ver mais detalhes";
+        }
+    }
+
+    // Close the modal if the user clicks the "close" span
+    document.querySelector('.close').onclick = function() {
+        closeFullscreen();
+    };
+
+
+
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Show/hide filter form on filter icon click
+        const filterButton = document.querySelector('.filter-button');
+        const filterFormContainer = document.getElementById('filter-form-container');
+        
+        if (filterButton && filterFormContainer) {
+            filterButton.addEventListener('click', function(event) {
+                event.preventDefault(); // Previne qualquer comportamento padrão do botão
+                filterFormContainer.classList.toggle('hidden');
+            });
+        } else {
+            console.error("Filter button or filter form container not found.");
+        }
+
+        // Handle AJAX filtering when clicking the "Apply Filters" button
+        const applyFiltersButton = document.getElementById('apply-filters');
+        const propertiesContainer = document.getElementById('properties-container');
+
+        if (applyFiltersButton && propertiesContainer) {
+            applyFiltersButton.addEventListener('click', function() {
+                // Get filter form data
+                const minPrice = document.getElementById('min_price').value;
+                const maxPrice = document.getElementById('max_price').value;
+                const location = document.getElementById('location').value;
+
+                // Prepare the data to be sent via AJAX
+                const data = {
+                    min_price: minPrice,
+                    max_price: maxPrice,
+                    location: location
+                };
+
+                // Create an XMLHttpRequest
+                const xhr = new XMLHttpRequest();
+                xhr.open('GET', '/filter_properties?' + new URLSearchParams(data), true);
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+                // When the response is received
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        // Replace the contents of the properties container with the response
+                        propertiesContainer.innerHTML = xhr.responseText;
+
+                        // Hide the filter form after filtering
+                        filterFormContainer.classList.add('hidden');
+                    }
+                };
+
+                // Send the request
+                xhr.send();
+            });
+        } else {
+            console.error("Apply filters button or properties container not found.");
+        }
+
+        // Close the modal if the user clicks the "close" span
+        const closeModalButton = document.querySelector('.close');
+        if (closeModalButton) {
+            closeModalButton.addEventListener('click', function() {
+                closeFullscreen();
+            });
+        } else {
+            console.error("Close button not found.");
+        }
+    });

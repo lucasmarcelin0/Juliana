@@ -1,0 +1,296 @@
+{% extends 'sales/layout.html' %}
+
+{% block title %}Encontre seu Imóvel{% endblock %}
+
+
+{% block filter %}
+<!-- Formulário de Filtro (Inicialmente Oculto) -->
+ <!-- Filter Form Container -->
+<div id="filter-form-container" class="filter-form-container hidden">
+    <form id="filter-form" class="filter-form">
+
+        <!-- Informações de Disponibilidade e Valores -->
+        <div class="filter-field">
+            <label for="min_price">Preço Mínimo:</label>
+            <input type="number" id="min_price" name="min_price" placeholder="Preço Mínimo">
+        </div>
+
+        <div class="filter-field">
+            <label for="max_price">Preço Máximo:</label>
+            <input type="number" id="max_price" name="max_price" placeholder="Preço Máximo">
+        </div>
+
+        <!-- Endereço do imóvel -->
+        <div class="filter-field">
+            <label for="location">Localização (Cidade ou Bairro):</label>
+            <input type="text" id="location" name="location" placeholder="Cidade ou Bairro">
+        </div>
+
+        <!-- Tipo de Imóvel -->
+        <div class="filter-field">
+            <label for="property_type">Tipo de Imóvel:</label>
+            <select id="property_type" name="property_type">
+                <option value="">Todos</option>
+                <option value="apartment">Apartamento</option>
+                <option value="house">Casa</option>
+                <option value="land">Lote</option>
+                <option value="farm">Fazenda</option>
+                <option value="wahehouse">Galpão</option>
+                <option value="commercial">Comercial</option>
+            </select>
+        </div>
+
+        <!-- Área útil e privativa -->
+        <div class="filter-field">
+            <label for="property_area_min">Área útil mínima (m²):</label>
+            <input type="number" id="property_area_min" name="property_area_min" placeholder="Área útil mínima (m²)">
+        </div>
+
+        <div class="filter-field">
+            <label for="property_area_max">Área útil máxima (m²):</label>
+            <input type="number" id="property_area_max" name="property_area_max" placeholder="Área útil máxima (m²)">
+        </div>
+
+        <div class="filter-field">
+            <label for="private_area_min">Área privativa mínima (m²):</label>
+            <input type="number" id="private_area_min" name="private_area_min" placeholder="Área privativa mínima (m²)">
+        </div>
+
+        <div class="filter-field">
+            <label for="private_area_max">Área privativa máxima (m²):</label>
+            <input type="number" id="private_area_max" name="private_area_max" placeholder="Área privativa máxima (m²)">
+        </div>
+
+        <!-- Características do imóvel -->
+        <div class="filter-field">
+            <label for="bedrooms">Dormitórios (incluindo suítes):</label>
+            <input type="number" id="bedrooms" name="bedrooms" placeholder="Dormitórios">
+        </div>
+
+        <div class="filter-field">
+            <label for="suites">Suítes:</label>
+            <input type="number" id="suites" name="suites" placeholder="Suítes">
+        </div>
+
+        <div class="filter-field">
+            <label for="bathrooms">Banheiros:</label>
+            <input type="number" id="bathrooms" name="bathrooms" placeholder="Banheiros">
+        </div>
+
+        <div class="filter-field">
+            <label for="garage_spots">Vagas de garagem:</label>
+            <input type="number" id="garage_spots" name="garage_spots" placeholder="Vagas de garagem">
+        </div>
+
+        <!-- Adereços e características -->
+        <div class="filter-field">
+            <label for="features">Adereços (separados por vírgula):</label>
+            <input type="text" id="features" name="features" placeholder="Ex: piscina, jardim">
+        </div>
+
+        <div class="filter-field">
+            <label for="is_covered">Cobertura:</label>
+            <select id="is_covered" name="is_covered">
+                <option value="">Todos</option>
+                <option value="yes">Sim</option>
+                <option value="no">Não</option>
+            </select>
+        </div>
+
+        <!-- Vagas de garagem e portaria -->
+        <div class="filter-field">
+            <label for="garage_type">Tipo de Vaga:</label>
+            <select id="garage_type" name="garage_type">
+                <option value="">Todos</option>
+                <option value="covered">Coberta</option>
+                <option value="free">Livre</option>
+                <option value="covered_and_free">Coberta e Livre</option>
+                <option value="none">Nem Coberta nem Livre</option>
+            </select>
+        </div>
+
+        <div class="filter-field">
+            <label for="has_pool">Piscina:</label>
+            <select id="has_pool" name="has_pool">
+                <option value="">Todos</option>
+                <option value="yes">Sim</option>
+                <option value="no">Não</option>
+            </select>
+        </div>
+
+        <div class="filter-field">
+            <label for="has_gatehouse">Portaria:</label>
+            <select id="has_gatehouse" name="has_gatehouse">
+                <option value="">Todos</option>
+                <option value="24h">24 h</option>
+                <option value="daytime">Diurna</option>
+                <option value="night">Noturna</option>
+                <option value="none">Sem portaria</option>
+            </select>
+        </div>
+
+        <!-- Condição do imóvel e acessibilidade -->
+        <div class="filter-field">
+            <label for="is_occupied">Ocupação:</label>
+            <select id="is_occupied" name="is_occupied">
+                <option value="">Todos</option>
+                <option value="vacant">Está vago</option>
+                <option value="owner">Proprietário mora</option>
+                <option value="tenant">Inquilino mora</option>
+            </select>
+        </div>
+
+        <div class="filter-field">
+            <label for="access">Acesso:</label>
+            <select id="access" name="access">
+                <option value="">Todos</option>
+                <option value="Key">Chave</option>
+                <option value="Biometry">Biometria</option>
+                <option value="Password">Senha</option>
+            </select>
+        </div>
+
+        <div class="filter-field">
+            <label for="accessibility">Acessibilidade:</label>
+            <select id="accessibility" name="accessibility">
+                <option value="">Todos</option>
+                <option value="yes">Sim</option>
+                <option value="no">Não</option>
+            </select>
+        </div>
+
+        <!-- Disponibilidade de mudança -->
+        <div class="filter-field">
+            <label for="move_availability">Disponibilidade de mudança:</label>
+            <select id="move_availability" name="move_availability">
+                <option value="">Todos</option>
+                <option value="immediate">Imediata</option>
+                <option value="30_days">30 dias</option>
+                <option value="60_days">60 dias</option>
+                <option value="other">Outro</option>
+            </select>
+        </div>
+
+        <!-- Valores adicionais -->
+        <div class="filter-field">
+            <label for="min_sale_price">Valor de venda mínimo:</label>
+            <input type="number" id="min_sale_price" name="min_sale_price" placeholder="Valor de venda mínimo">
+        </div>
+
+        <div class="filter-field">
+            <label for="max_sale_price">Valor de venda máximo:</label>
+            <input type="number" id="max_sale_price" name="max_sale_price" placeholder="Valor de venda máximo">
+        </div>
+
+        <div class="filter-field">
+            <label for="min_iptu_value">Valor de IPTU mínimo:</label>
+            <input type="number" id="min_iptu_value" name="min_iptu_value" placeholder="Valor de IPTU mínimo">
+        </div>
+
+        <div class="filter-field">
+            <label for="max_iptu_value">Valor de IPTU máximo:</label>
+            <input type="number" id="max_iptu_value" name="max_iptu_value" placeholder="Valor de IPTU máximo">
+        </div>
+
+        <div class="filter-field">
+            <label for="min_condo_fee">Valor do condomínio mínimo:</label>
+            <input type="number" id="min_condo_fee" name="min_condo_fee" placeholder="Valor do condomínio mínimo">
+        </div>
+
+        <div class="filter-field">
+            <label for="max_condo_fee">Valor do condomínio máximo:</label>
+            <input type="number" id="max_condo_fee" name="max_condo_fee" placeholder="Valor do condomínio máximo">
+        </div>
+
+        <button type="button" id="apply-filters">Aplicar Filtros</button>
+</form>
+</div>
+        {% endblock %}
+
+{% block content %}
+
+
+<!-- Container for Property Cards -->
+<div id="properties-container" class="properties-container">
+
+
+    {% for imo in imos %}
+        <div class="property-card">
+
+            <!-- Property Media Section -->
+            <div class="property-media">
+                <!-- Photo Section (Left Column) -->
+                <div class="property-photo" onclick="showAllImages(this)">
+                    {% for image in imo.images.all %}
+                        {% if forloop.first %}
+                            <img src="{{ image.image.url }}" alt="Property Image" class="property-image first-image">
+                        {% else %}
+                            <img src="{{ image.image.url }}" alt="Property Image" class="property-image hidden-image">
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <!-- Video Section (Right Column Placeholder) -->
+                <div class="property-video">
+                    {% if imo.video_url %}
+                    <iframe 
+                        src="{{ imo.video_url }}" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                {% else %}
+                    <p>Video Section Coming Soon</p>
+                {% endif %}
+                </div>
+            </div>
+
+                    <!-- Property Essential Information Section (Always Visible) -->
+            <div class="property-info">
+                <p><strong>Endereço:</strong> {{ imo.street }}, {{ imo.street_number }}, {{ imo.neighborhood }}, {{ imo.city }}, {{ imo.state }}</p>
+                <p><strong>Preço:</strong> R$ {{ imo.sale_price|default:imo.rent_price }}</p>
+                <p><strong>Alugar/Comprar:</strong> {% if imo.sale_price %} Comprar {% else %} Alugar {% endif %}</p>
+            </div>
+
+            <!-- Additional Information Button/Icon -->
+            <button type="button" class="details-button" onclick="toggleDetails({{ forloop.counter }})">Ver mais detalhes</button>
+            <div id="additional-info-{{ forloop.counter }}" class="property-info hidden">
+            
+            <!-- Additional Property Information (Hidden by Default) -->
+            <p><strong>Área do Imóvel:</strong> {{ imo.property_area }} m²</p>
+            <p><strong>Quartos:</strong> {{ imo.bedrooms }}</p>
+            <p><strong>Suítes:</strong> {{ imo.suites }}</p>
+            <p><strong>Banheiros:</strong> {{ imo.bathrooms }}</p>
+            <p><strong>Características:</strong> {{ imo.features }}</p>
+            <p><strong>Área Privativa:</strong> {{ imo.private_area }} m²</p>
+            <p><strong>Vagas de Garagem:</strong> {{ imo.garage_spots }}</p>
+            <p><strong>Tipo de Garagem:</strong> {{ imo.get_garage_type_display }}</p>
+            <p><strong>Tem Piscina:</strong> {{ imo.has_pool }}</p>
+            <p><strong>Portaria:</strong> {{ imo.get_has_gatehouse_display }}</p>
+            <p><strong>Condição:</strong> {{ imo.get_is_occupied_display }}</p>
+            <p><strong>Acessibilidade:</strong> {{ imo.accessibility }}</p>
+            <p><strong>Data de Disponibilidade para Mudança:</strong> {{ imo.move_availability }}</p>
+            <p><strong>Preço do Aluguel:</strong> R$ {{ imo.rent_price }}</p>
+            <p><strong>Preço de Venda:</strong> R$ {{ imo.sale_price }}</p>
+            <p><strong>Valor do IPTU:</strong> R$ {{ imo.iptu_value }}</p>
+            <p><strong>Taxa de Condomínio:</strong> R$ {{ imo.condo_fee }}</p>
+            <p><strong>Descrição Livre:</strong> {{ imo.free_description }}</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+
+
+
+    <!-- Fullscreen Modal for Images -->
+    <div id="fullscreen-modal" class="fullscreen-modal" onclick="closeFullscreen()">
+        <span class="close">&times;</span>
+        <div id="modal-content" class="modal-content"></div>
+    </div>
+{% endblock %}
+
+
+
+
+

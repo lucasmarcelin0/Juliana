@@ -1,0 +1,82 @@
+{% block content %}
+
+
+<!-- Container for Property Cards -->
+<div id="properties-container" class="properties-container">
+
+
+    {% for imo in imos %}
+        <div class="property-card">
+
+            <!-- Property Media Section -->
+            <div class="property-media">
+                <!-- Photo Section (Left Column) -->
+                <div class="property-photo" onclick="showAllImages(this)">
+                    {% for image in imo.images.all %}
+                        {% if forloop.first %}
+                            <img src="{{ image.image.url }}" alt="Property Image" class="property-image first-image">
+                        {% else %}
+                            <img src="{{ image.image.url }}" alt="Property Image" class="property-image hidden-image">
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+                <!-- Video Section (Right Column Placeholder) -->
+                <div class="property-video">
+                    {% if imo.video_url %}
+                    <iframe 
+                        src="{{ imo.video_url }}" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                {% else %}
+                    <p>Video Section Coming Soon</p>
+                {% endif %}
+                </div>
+            </div>
+
+                    <!-- Property Essential Information Section (Always Visible) -->
+            <div class="property-info">
+                <p><strong>Endereço:</strong> {{ imo.street }}, {{ imo.street_number }}, {{ imo.neighborhood }}, {{ imo.city }}, {{ imo.state }}</p>
+                <p><strong>Preço:</strong> R$ {{ imo.sale_price|default:imo.rent_price }}</p>
+                <p><strong>Alugar/Comprar:</strong> {% if imo.sale_price %} Comprar {% else %} Alugar {% endif %}</p>
+            </div>
+
+            <!-- Additional Information Button/Icon -->
+            <button type="button" class="details-button" onclick="toggleDetails({{ forloop.counter }})">Ver mais detalhes</button>
+            <div id="additional-info-{{ forloop.counter }}" class="property-info hidden">
+            
+            <!-- Additional Property Information (Hidden by Default) -->
+            <p><strong>Área do Imóvel:</strong> {{ imo.property_area }} m²</p>
+            <p><strong>Quartos:</strong> {{ imo.bedrooms }}</p>
+            <p><strong>Suítes:</strong> {{ imo.suites }}</p>
+            <p><strong>Banheiros:</strong> {{ imo.bathrooms }}</p>
+            <p><strong>Características:</strong> {{ imo.features }}</p>
+            <p><strong>Área Privativa:</strong> {{ imo.private_area }} m²</p>
+            <p><strong>Vagas de Garagem:</strong> {{ imo.garage_spots }}</p>
+            <p><strong>Tipo de Garagem:</strong> {{ imo.get_garage_type_display }}</p>
+            <p><strong>Tem Piscina:</strong> {{ imo.has_pool }}</p>
+            <p><strong>Portaria:</strong> {{ imo.get_has_gatehouse_display }}</p>
+            <p><strong>Condição:</strong> {{ imo.get_is_occupied_display }}</p>
+            <p><strong>Acessibilidade:</strong> {{ imo.accessibility }}</p>
+            <p><strong>Data de Disponibilidade para Mudança:</strong> {{ imo.move_availability }}</p>
+            <p><strong>Preço do Aluguel:</strong> R$ {{ imo.rent_price }}</p>
+            <p><strong>Preço de Venda:</strong> R$ {{ imo.sale_price }}</p>
+            <p><strong>Valor do IPTU:</strong> R$ {{ imo.iptu_value }}</p>
+            <p><strong>Taxa de Condomínio:</strong> R$ {{ imo.condo_fee }}</p>
+            <p><strong>Descrição Livre:</strong> {{ imo.free_description }}</p>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+
+
+
+    <!-- Fullscreen Modal for Images -->
+    <div id="fullscreen-modal" class="fullscreen-modal" onclick="closeFullscreen()">
+        <span class="close">&times;</span>
+        <div id="modal-content" class="modal-content"></div>
+    </div>
+{% endblock %}

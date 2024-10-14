@@ -22,4 +22,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include ('sales.urls')),
     path('users/', include("users.urls")),
+
+    # Include Allauth URLs
+    path('accounts/', include('allauth.urls')),
 ] 
+
+
+

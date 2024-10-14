@@ -1,5 +1,7 @@
 {% extends 'sales/layout.html' %}
 
+{% load auth_extras %}
+
 {% block title %}Perfil do Usuário{% endblock %}
 
 {% block content %}
@@ -9,5 +11,18 @@
     <p><strong>Email:</strong> joao@example.com</p>
     <p><strong>Data de Registro:</strong> 01/01/2022</p>
     <!-- Adicione mais informações conforme necessário -->
+    <a href="{% url 'account_logout' %}">Logout</a>
 </div>
+
+
+
+{% if request.user.groups.filter(name="Corretores").exists %}
+    <div class="perfil-container"></div>>
+        <!-- Content visible only to users in the "Corretores" group -->
+        <p>Welcome, Corretores!</p>
+    </div>
+{% endif %}
+
+
+
 {% endblock %}

@@ -39,7 +39,35 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+# Django apps
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+# Providers, e.g. for Google login
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.microsoft',
 ]
+
+SITE_ID = 1
+
+
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+# Optional configurations
+ACCOUNT_AUTHENTICATION_METHOD = 'username'  # Can be 'username' or 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'optional'  # Can be 'mandatory', 'optional', or 'none'
+LOGIN_REDIRECT_URL = '/'  # Where to redirect users after login
+LOGOUT_REDIRECT_URL = '/accounts/login/'  # Redirect after logout
+
+
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -49,8 +77,27 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'allauth.account.middleware.AccountMiddleware',  # Required for Allauth
     
 ]
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'lukemarki3@gmail.com'
+EMAIL_HOST_PASSWORD = 'meus3e33'
+DEFAULT_FROM_EMAIL = 'lukemarki3@gmail.com'
+
+
+
+
+
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+
+
 
 ROOT_URLCONF = 'juliana.urls'
 

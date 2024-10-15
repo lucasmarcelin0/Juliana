@@ -1,0 +1,16 @@
+/* Cores para os diferentes status dos lances */
+.row-status-pending {
+    background-color: #ffeb3b; /* Amarelo para pendente */
+}
+
+.row-status-accepted {
+    background-color: #4caf50; /* Verde para aceito */
+}
+
+.row-status-refused {
+    background-color: #f44336; /* Vermelho para recusado */
+}
+
+.row-status-counteroffer {
+    background-color: #2196f3; /* Azul para contra-oferta */
+}

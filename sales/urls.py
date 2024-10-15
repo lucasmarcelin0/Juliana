@@ -6,6 +6,7 @@ from . import views
 app_name = 'sales'  # This sets the namespace for the app
 
 urlpatterns = [
+
     path("", views.index, name="index"),
     path("perfil/", views.perfil, name="perfil"),
     path('filter_properties/', views.filter_properties, name='filter_properties'),

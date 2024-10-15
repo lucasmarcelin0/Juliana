@@ -1,7 +1,5 @@
 {% extends 'sales/layout.html' %}
 
-{% load auth_extras %}
-
 {% block title %}Perfil do Usuário{% endblock %}
 
 {% block content %}
@@ -14,15 +12,32 @@
     <a href="{% url 'account_logout' %}">Logout</a>
 </div>
 
+<div class="perfil-container">
+    <h2>Perfil do Usuário</h2>
+    <p><strong>Nome:</strong> João da Silva</p> <!-- Esses dados podem ser dinâmicos -->
+    <p><strong>Email:</strong> joao@example.com</p>
+    <p><strong>Data de Registro:</strong> 01/01/2022</p>
+    <!-- Adicione mais informações conforme necessário -->
+    <a href="{% url 'account_logout' %}">Logout</a>
+</div>
 
+<div class="perfil-container">
+    <h2>Perfil do Usuário</h2>
+    <p><strong>Nome:</strong> João da Silva</p> <!-- Esses dados podem ser dinâmicos -->
+    <p><strong>Email:</strong> joao@example.com</p>
+    <p><strong>Data de Registro:</strong> 01/01/2022</p>
+    <!-- Adicione mais informações conforme necessário -->
+    <a href="{% url 'account_logout' %}">Logout</a>
+</div>
 
-{% if request.user.groups.filter(name="Corretores").exists %}
-    <div class="perfil-container"></div>>
-        <!-- Content visible only to users in the "Corretores" group -->
-        <p>Welcome, Corretores!</p>
-    </div>
-{% endif %}
-
+<div class="perfil-container">
+    <h2>Perfil do Usuário</h2>
+    <p><strong>Nome:</strong> João da Silva</p> <!-- Esses dados podem ser dinâmicos -->
+    <p><strong>Email:</strong> joao@example.com</p>
+    <p><strong>Data de Registro:</strong> 01/01/2022</p>
+    <!-- Adicione mais informações conforme necessário -->
+    <a href="{% url 'account_logout' %}">Logout</a>
+</div>
 
 
 {% endblock %}

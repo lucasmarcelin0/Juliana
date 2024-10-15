@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib import admin
-from .models import Property, PropertyImage
+from .models import Property, PropertyImage, Bid, Deal 
 
 # Custom Widget for Horizontal RadioSelect (if you still want to use it for specific fields)
 class HorizontalRadioSelect(forms.RadioSelect):
@@ -75,3 +75,38 @@ admin.site.register(Property, PropertyAdmin)
 
 # Register the PropertyImage model if needed in admin panel
 admin.site.register(PropertyImage)
+
+from django.contrib import admin
+from .models import Bid
+
+@admin.register(Bid)
+class BidAdmin(admin.ModelAdmin):
+    list_display = ('user', 'property', 'amount', 'status', 'date')
+
+    def get_queryset(self, request):
+        # Sobrescreve para adicionar uma classe CSS de acordo com o status
+        qs = super().get_queryset(request)
+        for obj in qs:
+            obj.row_class = f"row-status-{obj.status}"
+        return qs
+
+    class Media:
+        css = {
+            'all': ('css/custom_admin.css',)  # Caminho para o CSS personalizado
+        }
+
+    def get_row_css(self, obj):
+        # Método para retornar a classe CSS conforme o status
+        return f"row-status-{obj.status}"
+
+    def changelist_view(self, request, extra_context=None):
+        # Sobrescreve a função para adicionar a classe CSS na linha da tabela
+        extra_context = extra_context or {}
+        response = super().changelist_view(request, extra_context=extra_context)
+        for obj in response.context_data['cl'].result_list:
+            obj.row_class = self.get_row_css(obj)
+        return response
+
+
+
+admin.site.register(Deal)

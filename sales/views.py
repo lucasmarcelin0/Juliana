@@ -1,14 +1,12 @@
-# views.py
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.http import JsonResponse
-from .models import Property, PropertyImage
+from .models import Property, PropertyImage, Bid
 from django.contrib.auth.decorators import login_required
+from .forms import BidForm
 
 
-
-
-# View index que mostra todos os imóveis
+# View que mostra todos os imóveis
 @login_required
 def index(request):
     imos = Property.objects.prefetch_related('images').all()
@@ -113,25 +111,65 @@ def filter_properties(request):
         'garage_type', 'has_pool', 'has_gatehouse', 'is_occupied', 'access',
         'accessibility', 'move_availability', 'iptu_value', 'images', 'video_url', 'condo_fee',
     ))
-    
-    
+
     return JsonResponse({'properties': properties_data})
 
 
-
-# View index que mostra todos os imóveis
 @login_required
 def index(request):
-    imos = Property.objects.prefetch_related('images').all()
-    return render(request, 'sales/index.html', {'imos': imos})
+    imos = Property.objects.prefetch_related('images', 'bids').all()
+    
+    if request.method == 'POST':
+        # Handle bid submission
+        if 'amount' in request.POST:
+            bid_form = BidForm(request.POST)
+            property_id = request.POST.get('property_id')
+            property_instance = get_object_or_404(Property, id=property_id)
+            
+            if bid_form.is_valid():
+                bid = bid_form.save(commit=False)
+                bid.user = request.user
+                bid.property = property_instance
+                bid.save()
+                return redirect('sales:index')
+        
+        # Handle owner's decision on bids (accept, refuse, counteroffer)
+        elif 'bid_action' in request.POST:
+            bid_id = request.POST.get('bid_id')
+            action = request.POST.get('bid_action')
+            bid = get_object_or_404(Bid, id=bid_id)
+            
+            if action == 'accept':
+                bid.status = 'accepted'
+            elif action == 'refuse':
+                bid.status = 'refused'
+            elif action == 'counteroffer':
+                counter_amount = request.POST.get('counteroffer')
+                bid.status = 'counteroffer'
+                bid.counteroffer = counter_amount
+            bid.save()
+            return redirect('sales:index')
+
+    bid_form = BidForm()
+
+    context = {
+        'imos': imos,
+        'bid_form': bid_form,
+    }
+
+    return render(request, 'sales/index.html', context)
 
 
+
+
+
+# View para o perfil do usuário
 def perfil(request):
-    # Aqui você pode adicionar lógica para obter dados do usuário, se necessário.
     return render(request, 'sales/perfil.html')
 
 
-
+# Renderização da propriedade
 def render_property(request):
-    form = PropertyForm()  # Initialize the form
+    form = PropertyForm()  # Inicializa o formulário
     return render(request, 'sales/render.html', {'form': form})
+

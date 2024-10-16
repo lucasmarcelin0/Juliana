@@ -4,39 +4,204 @@
 
 {% block content %}
 <div class="perfil-container">
-    <h2>Perfil do Usuário</h2>
-    <p><strong>Nome:</strong> João da Silva</p> <!-- Esses dados podem ser dinâmicos -->
-    <p><strong>Email:</strong> joao@example.com</p>
-    <p><strong>Data de Registro:</strong> 01/01/2022</p>
-    <!-- Adicione mais informações conforme necessário -->
+
+    <div class="user-profile">
+        <h2>Perfil do Usuário</h2>
+        
+            <!-- Exibir o nome completo se disponível, caso contrário, exibir o nome de usuário -->
+        <p><strong>Nome:</strong> 
+            {% if user.get_full_name %}
+                {{ user.get_full_name }}
+            {% else %}
+                {{ user.username }}
+            {% endif %}
+        </p>
+        
+        <!-- Display user's email -->
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        
+        
+        <!-- Display PropertyOwner related information -->
+        {% if user.propertyowner %}
+            <!-- Display phone number from PropertyOwner -->
+            <p><strong>Celular:</strong> {{ user.propertyowner.phone_number }}</p>
+            
+        {% else %}
+            <p>Informações adicionais não disponíveis.</p>
+        {% endif %}
+
+     <!-- Adicionar dados dinâmicos dinâmicos , Nome completo, data de nascimento, telefone, e-mail, endereço, cpf -->
+
+
     <a href="{% url 'account_logout' %}">Logout</a>
+    </div>
 </div>
 
 <div class="perfil-container">
-    <h2>Perfil do Usuário</h2>
-    <p><strong>Nome:</strong> João da Silva</p> <!-- Esses dados podem ser dinâmicos -->
-    <p><strong>Email:</strong> joao@example.com</p>
-    <p><strong>Data de Registro:</strong> 01/01/2022</p>
-    <!-- Adicione mais informações conforme necessário -->
-    <a href="{% url 'account_logout' %}">Logout</a>
+    <h2>Minhas Propriedades</h2>
+    {% if user_properties %}
+        <!-- Container for Property Cards -->
+        <div id="properties-container" class="properties-container">
+            {% for imo in user_properties %}
+                <div class="property-card">
+
+                    <!-- Property Media Section -->
+                    <div class="property-media">
+                        <!-- Photo Section (Left Column) -->
+                        <div class="property-photo" onclick="showAllImages(this)">
+                            {% for image in imo.images.all %}
+                                {% if forloop.first %}
+                                    <img src="{{ image.image.url }}" alt="Property Image" class="property-image first-image">
+                                {% else %}
+                                    <img src="{{ image.image.url }}" alt="Property Image" class="property-image hidden-image">
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <!-- Video Section (Right Column Placeholder) -->
+                        <div class="property-video">
+                            {% if imo.video_url %}
+                            <iframe 
+                                src="{{ imo.video_url }}" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen>
+                            </iframe>
+                            {% else %}
+                                <p>Video Section Coming Soon</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Property Essential Information Section (Always Visible) -->
+                    <div class="property-info">
+                        <p><strong>Endereço:</strong> {{ imo.street }}, {{ imo.street_number }}, {{ imo.neighborhood }}, {{ imo.city }}, {{ imo.state }}</p>
+                        <p><strong>Preço:</strong> R$ {{ imo.sale_price|default:imo.rent_price }}</p>
+                        <p><strong>Alugar/Comprar:</strong> {% if imo.sale_price %} Comprar {% else %} Alugar {% endif %}</p>
+                    </div>
+
+                    <!-- Additional Information Button/Icon -->
+                    <button type="button" class="details-button" onclick="toggleDetails({{ forloop.counter }})">Ver mais detalhes</button>
+                    <div id="additional-info-{{ forloop.counter }}" class="property-info hidden">
+                    
+                        <!-- Additional Property Information (Hidden by Default) -->
+                        <p><strong>Área do Imóvel:</strong> {{ imo.property_area }} m²</p>
+                        <p><strong>Quartos:</strong> {{ imo.bedrooms }}</p>
+                        <p><strong>Suítes:</strong> {{ imo.suites }}</p>
+                        <p><strong>Banheiros:</strong> {{ imo.bathrooms }}</p>
+                        <p><strong>Características:</strong> {{ imo.features }}</p>
+                        <p><strong>Área Privativa:</strong> {{ imo.private_area }} m²</p>
+                        <p><strong>Vagas de Garagem:</strong> {{ imo.garage_spots }}</p>
+                        <p><strong>Tipo de Garagem:</strong> {{ imo.get_garage_type_display }}</p>
+                        <p><strong>Tem Piscina:</strong> {{ imo.has_pool }}</p>
+                        <p><strong>Portaria:</strong> {{ imo.get_has_gatehouse_display }}</p>
+                        <p><strong>Condição:</strong> {{ imo.get_is_occupied_display }}</p>
+                        <p><strong>Acessibilidade:</strong> {{ imo.accessibility }}</p>
+                        <p><strong>Data de Disponibilidade para Mudança:</strong> {{ imo.move_availability }}</p>
+                        <p><strong>Preço do Aluguel:</strong> R$ {{ imo.rent_price }}</p>
+                        <p><strong>Preço de Venda:</strong> R$ {{ imo.sale_price }}</p>
+                        <p><strong>Valor do IPTU:</strong> R$ {{ imo.iptu_value }}</p>
+                        <p><strong>Taxa de Condomínio:</strong> R$ {{ imo.condo_fee }}</p>
+                        <p><strong>Descrição Livre:</strong> {{ imo.free_description }}</p>
+
+                        <!-- Section for Bidding -->
+                        <h3>Fazer um Lance</h3>
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            <input type="hidden" name="property_id" value="{{ imo.id }}">
+                            <label for="amount">Valor do Lance:</label>
+                            <input type="number" name="amount" min="0" step="0.01" placeholder="R$ 0,00" required>
+                            <label for="description">Condições de Pagamento:</label>
+                            <textarea name="description" rows="3" placeholder="Digite as condições de pagamento (opcional)"></textarea>
+                            <button type="submit">Enviar Lance</button>
+                        </form>
+
+                        <!-- Existing Bids Section -->
+                        <h4>Lances Atuais</h4>
+                        <ul>
+                            {% for bid in imo.bids.all %}
+                                <li>
+                                    {{ bid.user.username }} ofereceu R$ {{ bid.amount }} - {{ bid.description }}
+
+                                    <!-- Display for the user who made the bid or the property owner -->
+                                    {% if user == bid.user or user == imo.owner %}
+                                        {% if bid.status == 'counteroffer' %}
+                                            O proprietário fez uma contra-oferta de R$ {{ bid.counteroffer }}.
+                                            <form method="POST" action="">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="bid_id" value="{{ bid.id }}">
+                                                <button type="submit" name="bid_action" value="accept">Aceitar</button>
+                                                <button type="submit" name="bid_action" value="refuse">Recusar</button>
+                                            </form>
+                                        {% elif bid.status == 'accepted' %}
+                                            <p>Lance Aceito</p>
+                                        {% elif bid.status == 'refused' %}
+                                            <p>Lance Recusado</p>
+                                        {% else %}
+                                            <form method="POST" action="">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="bid_id" value="{{ bid.id }}">
+                                                <button type="submit" name="bid_action" value="accept">Aceitar</button>
+                                                <button type="submit" name="bid_action" value="refuse">Recusar</button>
+                                                <input type="number" name="counteroffer" placeholder="Fazer Contra-Oferta">
+                                                <button type="submit" name="bid_action" value="counteroffer">Enviar Contra-Oferta</button>
+                                            </form>
+                                        {% endif %}
+                                    {% else %}
+                                        <p>Lance está em análise pelo proprietário.</p>
+                                    {% endif %}
+                                </li>
+                            {% empty %}
+                                <li>Nenhum lance realizado ainda.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Você não possui propriedades cadastradas.</p>
+    {% endif %}
 </div>
 
-<div class="perfil-container">
-    <h2>Perfil do Usuário</h2>
-    <p><strong>Nome:</strong> João da Silva</p> <!-- Esses dados podem ser dinâmicos -->
-    <p><strong>Email:</strong> joao@example.com</p>
-    <p><strong>Data de Registro:</strong> 01/01/2022</p>
-    <!-- Adicione mais informações conforme necessário -->
-    <a href="{% url 'account_logout' %}">Logout</a>
-</div>
 
 <div class="perfil-container">
-    <h2>Perfil do Usuário</h2>
-    <p><strong>Nome:</strong> João da Silva</p> <!-- Esses dados podem ser dinâmicos -->
-    <p><strong>Email:</strong> joao@example.com</p>
-    <p><strong>Data de Registro:</strong> 01/01/2022</p>
-    <!-- Adicione mais informações conforme necessário -->
-    <a href="{% url 'account_logout' %}">Logout</a>
+    <h2>Minhas propostas.</h2>
+
+</div>
+
+
+<!--
+<div class="perfil-container">
+    <h2>Acordos.</h2>
+
+</div>
+
+Só mostrar para advogados
+
+-->
+
+
+<div class="perfil-container">
+    <h2>Propriedades que desejo.</h2>
+
+</div>
+
+<!--
+<div class="perfil-container">
+    <h2>propriedades recomendadas.</h2>
+
+</div>
+
+Só mostrar para corretores, permitir que os corretores observem propriedades recomendadas para cada cliente.
+
+-->
+
+
+
+<div class="perfil-container">
+    <h2>Propriedades recomendadas pelo corretor.</h2>
+
 </div>
 
 

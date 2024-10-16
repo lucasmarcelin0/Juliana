@@ -1,15 +1,9 @@
-<!-- templates/account/logout.html -->
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Out</title>
-    <link rel="stylesheet" href="{% static 'css/logout.css' %}"> <!-- Link to your custom CSS -->
-</head>
-<body>
-    <div class="logout-container">
+{% extends 'account/layout.html' %}
+
+
+{% block body %}
+<div class="container">
+    <div class="right-section">
         <h2>Sign Out</h2>
         <p>Are you sure you want to sign out?</p>
         <form method="POST" action="{% url 'account_logout' %}">
@@ -18,7 +12,6 @@
         </form>
         
         <a href="{% url 'account_login' %}">Login</a>
-
-    </div>
-</body>
-</html>
+    </div>        
+</div>
+{% endblock %}

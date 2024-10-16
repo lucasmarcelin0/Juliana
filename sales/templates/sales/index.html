@@ -6,8 +6,13 @@
 {% block filter %}
 <!-- Formulário de Filtro (Inicialmente Oculto) -->
  <!-- Filter Form Container -->
-<div id="filter-form-container" class="filter-form-container hidden">
-    <form id="filter-form" class="filter-form">
+
+    
+<div id="filter-form-container" class="filter-form-container hidden" method="GET" action="{% url 'sales:filter_properties' %}">
+
+    <div class="filter-form-content">
+
+    <form id="filter-form" class="filter-form" method="GET" action="{% url 'sales:filter_properties' %}">
 
         <!-- Informações de Disponibilidade e Valores -->
         <div class="filter-field">
@@ -205,6 +210,7 @@
         <button type="button" id="apply-filters">Aplicar Filtros</button>
 </form>
 </div>
+</div>
         {% endblock %}
 
 {% block content %}
@@ -276,14 +282,29 @@
                 <p><strong>Descrição Livre:</strong> {{ imo.free_description }}</p>
 
                                <!-- Section for Bidding -->
-                               <h3>Fazer um Lance</h3>
+                               <h3>Proposta!</h3>
                             <form method="post" action="">
                                 {% csrf_token %}
                                 <input type="hidden" name="property_id" value="{{ imo.id }}">
-                                <label for="amount">Valor do Lance:</label>
+                                <label for="amount">Valor:</label>
                                 <input type="number" name="amount" min="0" step="0.01" placeholder="R$ 0,00" required>
                                 <label for="description">Condições de Pagamento:</label>
-                                <textarea name="description" rows="3" placeholder="Digite as condições de pagamento (opcional)"></textarea>
+                              
+<div class="payment-options">
+    <label>
+        <input type="radio" name="payment_conditions" value="A vista"> A vista
+    </label><br>
+    <label>
+        <input type="radio" name="payment_conditions" value="Fundo de Garantia + recurso Próprio"> Fundo de Garantia + recurso Próprio
+    </label><br>
+    <label>
+        <input type="radio" name="payment_conditions" value="Recurso Próprio + Financiamento"> Recurso Próprio + Financiamento
+    </label><br>
+    <label>
+        <input type="radio" name="payment_conditions" value="Recurso próprio + Fundo de Garantia + Financiamento"> Recurso próprio + Fundo de Garantia + Financiamento
+    </label>
+</div>
+
                                 <button type="submit">Enviar Lance</button>
                             </form>
                             

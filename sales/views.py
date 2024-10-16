@@ -1,118 +1,166 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.http import JsonResponse
-from .models import Property, PropertyImage, Bid
+from .models import Property, PropertyImage, Bid, PropertyOwner
 from django.contrib.auth.decorators import login_required
 from .forms import BidForm
 
 
-# View que mostra todos os imóveis
-@login_required
-def index(request):
-    imos = Property.objects.prefetch_related('images').all()
-    return render(request, 'sales/index.html', {'imos': imos})
 
+
+from django.db.models import Q
+from django.http import JsonResponse
+from .models import Property
 
 def filter_properties(request):
-    # Extract filter parameters from the GET request
-    min_price = request.GET.get('min_price')
-    max_price = request.GET.get('max_price')
-    location = request.GET.get('location')
-    property_type = request.GET.get('property_type')
-    property_area_min = request.GET.get('property_area_min')
-    property_area_max = request.GET.get('property_area_max')
-    private_area_min = request.GET.get('private_area_min')
-    private_area_max = request.GET.get('private_area_max')
-    bedrooms = request.GET.get('bedrooms')
-    suites = request.GET.get('suites')
-    bathrooms = request.GET.get('bathrooms')
-    garage_spots = request.GET.get('garage_spots')
-    features = request.GET.get('features')
-    is_covered = request.GET.get('is_covered')
-    garage_type = request.GET.get('garage_type')
-    has_pool = request.GET.get('has_pool')
-    has_gatehouse = request.GET.get('has_gatehouse')
-    is_occupied = request.GET.get('is_occupied')
-    access = request.GET.get('access')
-    accessibility = request.GET.get('accessibility')
-    move_availability = request.GET.get('move_availability')
-    min_sale_price = request.GET.get('min_sale_price')
-    max_sale_price = request.GET.get('max_sale_price')
-    min_iptu_value = request.GET.get('min_iptu_value')
-    max_iptu_value = request.GET.get('max_iptu_value')
-    min_condo_fee = request.GET.get('min_condo_fee')
-    max_condo_fee = request.GET.get('max_condo_fee')
-
-    # Filter the queryset based on the provided parameters
+    # Start with all properties
     properties = Property.objects.all()
 
-    if min_price:
+    # Apply filters only if parameters are present
+    if request.GET.get('min_price'):
+        min_price = request.GET.get('min_price')
         properties = properties.filter(rent_price__gte=min_price)
-    if max_price:
+    
+    if request.GET.get('max_price'):
+        max_price = request.GET.get('max_price')
         properties = properties.filter(rent_price__lte=max_price)
-    if location:
+    
+    if request.GET.get('location'):
+        location = request.GET.get('location')
         properties = properties.filter(Q(city__icontains=location) | Q(neighborhood__icontains=location))
-    if property_type:
+    
+    if request.GET.get('property_type'):
+        property_type = request.GET.get('property_type')
         properties = properties.filter(property_type=property_type)
-    if property_area_min:
+    
+    if request.GET.get('property_area_min'):
+        property_area_min = request.GET.get('property_area_min')
         properties = properties.filter(property_area__gte=property_area_min)
-    if property_area_max:
+    
+    if request.GET.get('property_area_max'):
+        property_area_max = request.GET.get('property_area_max')
         properties = properties.filter(property_area__lte=property_area_max)
-    if private_area_min:
+    
+    if request.GET.get('private_area_min'):
+        private_area_min = request.GET.get('private_area_min')
         properties = properties.filter(private_area__gte=private_area_min)
-    if private_area_max:
+    
+    if request.GET.get('private_area_max'):
+        private_area_max = request.GET.get('private_area_max')
         properties = properties.filter(private_area__lte=private_area_max)
-    if bedrooms:
+    
+    if request.GET.get('bedrooms'):
+        bedrooms = request.GET.get('bedrooms')
         properties = properties.filter(bedrooms__gte=bedrooms)
-    if suites:
+    
+    if request.GET.get('suites'):
+        suites = request.GET.get('suites')
         properties = properties.filter(suites__gte=suites)
-    if bathrooms:
+    
+    if request.GET.get('bathrooms'):
+        bathrooms = request.GET.get('bathrooms')
         properties = properties.filter(bathrooms__gte=bathrooms)
-    if garage_spots:
+    
+    if request.GET.get('garage_spots'):
+        garage_spots = request.GET.get('garage_spots')
         properties = properties.filter(garage_spots__gte=garage_spots)
-    if features:
-        feature_list = features.split(',')
+    
+    if request.GET.get('features'):
+        feature_list = request.GET.get('features').split(',')
         for feature in feature_list:
             properties = properties.filter(features__icontains=feature.strip())
-    if is_covered:
+    
+    if request.GET.get('is_covered'):
+        is_covered = request.GET.get('is_covered')
         properties = properties.filter(is_covered=is_covered)
-    if garage_type:
+    
+    if request.GET.get('garage_type'):
+        garage_type = request.GET.get('garage_type')
         properties = properties.filter(garage_type=garage_type)
-    if has_pool:
+    
+    if request.GET.get('has_pool'):
+        has_pool = request.GET.get('has_pool')
         properties = properties.filter(has_pool=has_pool)
-    if has_gatehouse:
+    
+    if request.GET.get('has_gatehouse'):
+        has_gatehouse = request.GET.get('has_gatehouse')
         properties = properties.filter(has_gatehouse=has_gatehouse)
-    if is_occupied:
+    
+    if request.GET.get('is_occupied'):
+        is_occupied = request.GET.get('is_occupied')
         properties = properties.filter(is_occupied=is_occupied)
-    if access:
+    
+    if request.GET.get('access'):
+        access = request.GET.get('access')
         properties = properties.filter(access=access)
-    if accessibility:
+    
+    if request.GET.get('accessibility'):
+        accessibility = request.GET.get('accessibility')
         properties = properties.filter(accessibility=accessibility)
-    if move_availability:
+    
+    if request.GET.get('move_availability'):
+        move_availability = request.GET.get('move_availability')
         properties = properties.filter(move_availability=move_availability)
-    if min_sale_price:
+    
+    if request.GET.get('min_sale_price'):
+        min_sale_price = request.GET.get('min_sale_price')
         properties = properties.filter(sale_price__gte=min_sale_price)
-    if max_sale_price:
+    
+    if request.GET.get('max_sale_price'):
+        max_sale_price = request.GET.get('max_sale_price')
         properties = properties.filter(sale_price__lte=max_sale_price)
-    if min_iptu_value:
+    
+    if request.GET.get('min_iptu_value'):
+        min_iptu_value = request.GET.get('min_iptu_value')
         properties = properties.filter(iptu_value__gte=min_iptu_value)
-    if max_iptu_value:
+    
+    if request.GET.get('max_iptu_value'):
+        max_iptu_value = request.GET.get('max_iptu_value')
         properties = properties.filter(iptu_value__lte=max_iptu_value)
-    if min_condo_fee:
+    
+    if request.GET.get('min_condo_fee'):
+        min_condo_fee = request.GET.get('min_condo_fee')
         properties = properties.filter(condo_fee__gte=min_condo_fee)
-    if max_condo_fee:
+    
+    if request.GET.get('max_condo_fee'):
+        max_condo_fee = request.GET.get('max_condo_fee')
         properties = properties.filter(condo_fee__lte=max_condo_fee)
 
-    # Convert properties to a list of dictionaries to return as JSON
-    properties_data = list(properties.values(
-        'id', 'owner_name', 'street', 'city', 'state', 'neighborhood',
-        'property_type', 'rent_price', 'sale_price', 'bedrooms', 'bathrooms', 'suites',
-        'property_area', 'private_area', 'garage_spots', 'features', 'is_covered',
-        'garage_type', 'has_pool', 'has_gatehouse', 'is_occupied', 'access',
-        'accessibility', 'move_availability', 'iptu_value', 'images', 'video_url', 'condo_fee',
-    ))
+    # Convert properties to a list of dictionaries to return as JSON (without related fields like 'images')
+    properties_data = []
+    for property in properties:
+        properties_data.append({
+            'id': property.id,
+            'street': property.street,
+            'street_number': property.street_number,
+            'city': property.city,
+            'state': property.state,
+            'neighborhood': property.neighborhood,
+            'rent_price': property.rent_price,
+            'sale_price': property.sale_price,
+            'bedrooms': property.bedrooms,
+            'bathrooms': property.bathrooms,
+            'suites': property.suites,
+            'property_area': property.property_area,
+            'private_area': property.private_area,
+            'garage_spots': property.garage_spots,
+            'features': property.features,
+            'garage_type': property.garage_type,
+            'has_pool': property.has_pool,
+            'has_gatehouse': property.has_gatehouse,
+            'is_occupied': property.is_occupied,
+            'accessibility': property.accessibility,
+            'move_availability': property.move_availability,
+            'iptu_value': property.iptu_value,
+            'condo_fee': property.condo_fee,
+            'video_url': property.video_url,
+            'images': [{'url': image.image.url} for image in property.images.all()]  # Include images
+        })
 
     return JsonResponse({'properties': properties_data})
+
+
+
 
 
 @login_required
@@ -163,9 +211,17 @@ def index(request):
 
 
 
-# View para o perfil do usuário
 def perfil(request):
-    return render(request, 'sales/perfil.html')
+    # Fetch the PropertyOwner for the logged-in user
+    property_owner = PropertyOwner.objects.get(user=request.user)
+    
+    # Fetch all properties associated with this PropertyOwner
+    user_properties = property_owner.properties.all()
+    
+    return render(request, 'sales/perfil.html', {
+        'user': request.user,
+        'user_properties': user_properties
+    })
 
 
 # Renderização da propriedade

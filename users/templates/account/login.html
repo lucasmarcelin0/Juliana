@@ -1,33 +1,31 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Majimoveis - Login</title>
-    <link rel="stylesheet" href="{% static 'css/login.css' %}">
-</head>
-<body>
-    <div class="background-image"></div>
+{% extends 'account/layout.html' %}
 
-    <div class="container">
-        <div class="right-section">
-            <a href="{% url 'account_signup' %}" class="register">Register</a>
-            <a href="{% url 'account_login' %}" class="login active">Sign in</a>
-            <h2>Sign in</h2>
-            <form method="POST" action="{% url 'account_login' %}">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn-submit">Sign in</button>
-            </form>
-            <p><a href="{% url 'account_reset_password' %}">Forgot password?</a></p>
-            <p>Or sign in with:</p>
-            <div class="social-login">
-                <a class="btn-social google">Google</a>
-                <a class="btn-social facebook">Facebook</a>
-                <a class="btn-social microsoft">Microsoft</a>
-            </div>
+
+{% block body %}
+<div class="container">
+    <div class="right-section">
+        <div class="auth-links">
+            <a href="{% url 'account_signup' %}" class="btn-auth">Registrar</a>
+            <a href="{% url 'account_login' %}" class="btn-auth">Entrar</a>
         </div>
-    </div>
-</body>
-</html>
+        
+        <h2>Entrar</h2>
+        <form method="POST" action="{% url 'account_login' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn-submit">Entrar</button>
+        </form>
+        <p><a href="{% url 'account_reset_password' %}">Esqueceu a senha?</a></p>
+        <p>Or sign in with:</p>
+    </div>        
+</div>
+{% endblock %}
+
+
+
+<!--
+<div class="social-login">
+            <a class="btn-social google">Google</a>
+            <a class="btn-social facebook">Facebook</a>
+            <a class="btn-social microsoft">Microsoft</a>
+-->

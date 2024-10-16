@@ -153,7 +153,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
 TIME_ZONE = 'UTC'
 
@@ -185,7 +185,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
+LOGIN_URL = '/accounts/login/'
+  # Redirect to this URL if a login is required
 
-LOGIN_URL = '/users/login/'  # Redirect to this URL if a login is required
+ACCOUNT_FORMS = {
+    'signup': 'users.forms.CustomSignupForm',  # Use the custom signup form
+}
+
+
 
 

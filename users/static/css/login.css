@@ -8,7 +8,7 @@ body {
 
 /* Full-page Background Image Styling */
 .background-image {
-    background-image: url('{% static 'images/cartoon.jpeg' %}'); /* Change to your image path */
+    background-image: url('{% static 'images\majimoveis.jpeg' %}'); /* Updated image */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -91,6 +91,56 @@ button:hover {
 .microsoft {
     background-color: #F35325;
 }
+
+
+
+
+
+
+/* Style for the Auth Buttons at the Top */
+.auth-buttons {
+    display: flex;
+    justify-content: space-between; /* Space them out evenly */
+    margin-bottom: 20px; /* Space below the buttons */
+    width: 100%; /* Full width of the container */
+}
+
+/* Primary button (Registrar) */
+.auth-buttons .btn-primary {
+    background-color: #4285F4; /* Google button blue color */
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    width: 48%; /* Adjust the width of the buttons */
+}
+
+/* Secondary button (Entrar) */
+.auth-buttons .btn-secondary {
+    background-color: #DB4437; /* Microsoft button color */
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    width: 48%;
+}
+
+/* Hover effect */
+.auth-buttons .btn-primary:hover,
+.auth-buttons .btn-secondary:hover {
+    background-color: #333; /* Darker shade on hover */
+}
+
+
+
+
+
+
+
 
 /* Media Queries for Mobile */
 @media (max-width: 768px) {

@@ -1,14 +1,45 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+
+class PropertyOwner(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone_number = models.CharField(max_length=15, verbose_name="Celular", default="(00) 00000-0000")
+
+    IS_MARRIED_CHOICES = [
+        ('Yes', 'Sim'),
+        ('No', 'Não')
+    ]
+    is_married = models.CharField(max_length=3, choices=IS_MARRIED_CHOICES, verbose_name="É casado", default='No')
+
+    def __str__(self):
+        return self.user.get_full_name() if self.user else "Sem proprietário"  # Get the full name from the User model or return a default message
+
+    @property
+    def email(self):
+        return self.user.email if self.user else "Sem e-mail"  # Get the email from the User model or return a default message
+
+    # Validation to ensure the User has a full name and email before saving PropertyOwner
+    def clean(self):
+        # Ensure full name and email are present before saving
+        if not self.user.first_name or not self.user.last_name:
+            raise ValidationError("O usuário deve ter nome completo preenchido (primeiro e último nome).")
+        if not self.user.email:
+            raise ValidationError("O usuário deve ter um email preenchido.")
+
+    def save(self, *args, **kwargs):
+        # Call the clean method to run the validation before saving
+        self.clean()
+        super(PropertyOwner, self).save(*args, **kwargs)
 
 
 class Property(models.Model):
-    # Informações do proprietário
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="properties", verbose_name="Proprietário")
-    owner_name = models.CharField(max_length=255, verbose_name="Nome completo do proprietário", default="Não especificado")
-    phone_number = models.CharField(max_length=15, verbose_name="Celular", default="(00) 00000-0000")
-    email = models.EmailField(verbose_name="E-mail", default="default@example.com")
-    owner = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="properties", verbose_name="Proprietário", null=True, blank=True)
+    #likes and dislikes
+    likes = models.ManyToManyField(User, related_name='property_likes', blank=True)
+    dislikes = models.ManyToManyField(User, related_name='property_dislikes', blank=True)
+
+    # Many-to-Many relationship with PropertyOwner
+    owner = models.ManyToManyField(PropertyOwner, related_name="properties")
 
 
     # Endereço do imóvel
@@ -114,8 +145,13 @@ class Property(models.Model):
     # Descrição livre do imóvel
     free_description = models.TextField(verbose_name="Descrição livre", null=True, blank=True)
 
-    def __str__(self):
-        return f"{self.owner_name} - {self.street}, {self.city}"
+
+def __str__(self):
+    # Access the full name from the User model via the get_full_name method
+    owner = ", ".join([owner.user.get_full_name() for owner in self.owner.all()])
+    if not owner:
+        owner = "Sem proprietário"  # In case no owner is assigned
+    return f"{owner} - {self.street}, {self.city}"
 
 
 class PropertyImage(models.Model):

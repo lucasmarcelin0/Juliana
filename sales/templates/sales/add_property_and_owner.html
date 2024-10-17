@@ -1,0 +1,139 @@
+{% extends 'sales/layout.html' %}
+{% block content %}
+
+<div class="container">
+
+
+    <!-- Button for Adding New Property Owner Individually -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ownerModal">
+        Criar Novo Proprietário
+    </button>
+
+    <!-- Button for Adding New Property Individually -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#propertyModal">
+        Criar Novo Imóvel
+    </button>
+
+    <!-- Modal for Creating Property Owner Individually -->
+    <div class="modal fade" id="ownerModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Novo Cadastro de Tutor(a)</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{% url 'sales:add_property_and_owner' %}">
+                        {% csrf_token %}
+                        <!-- User Form Fields -->
+                        {{ user_form.as_p }}
+                        <!-- Property Owner Form Fields -->
+                        {{ owner_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Salvar Proprietário</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Creating Property Individually -->
+    <div class="modal fade" id="propertyModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Novo Cadastro de Imóvel</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="{% url 'sales:add_property_and_owner' %}">
+                        {% csrf_token %}
+                        <!-- Property Form Fields -->
+                        {{ property_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Salvar Imóvel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+<!--
+from django.shortcuts import render, get_object_or_404, redirect
+from django.db.models import Q
+from django.http import JsonResponse
+from .models import Property, PropertyImage, Bid, PropertyOwner
+from django.contrib.auth.decorators import login_required
+from .forms import BidForm
+
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import UserForm, PropertyOwnerForm, PropertyForm
+from .models import PropertyOwner
+
+def add_property_and_owner(request):
+    if request.method == 'POST':
+        user_form = UserForm(request.POST)
+        owner_form = PropertyOwnerForm(request.POST)
+        property_form = PropertyForm(request.POST)
+
+        # Case 1: Adding only PropertyOwner (and User)
+        if owner_form.is_valid() and user_form.is_valid():
+            user = user_form.save(commit=False)
+            user.set_password(user_form.cleaned_data['password'])
+            user.save()
+
+            property_owner = owner_form.save(commit=False)
+            property_owner.user = user
+            property_owner.save()
+
+            return redirect('success_page')
+
+        # Case 2: Adding only Property (Property must be linked to an existing owner)
+        elif property_form.is_valid():
+            property = property_form.save(commit=False)
+
+            # Ensure the PropertyOwner is selected via POST data (e.g., from a dropdown)
+            if 'property_owner_id' in request.POST:
+                property_owner = get_object_or_404(PropertyOwner, id=request.POST['property_owner_id'])
+                property.owner = property_owner  # Link to the existing PropertyOwner
+                property.save()
+
+                return redirect('success_page')
+            else:
+                # If no owner is selected, return an error
+                return render(request, 'sales/add_property_and_owner.html', {
+                    'property_form': property_form,
+                    'error_message': 'No Property Owner selected.'
+                })
+
+    else:
+        # Initialize forms for GET request
+        user_form = UserForm()
+        owner_form = PropertyOwnerForm()
+        property_form = PropertyForm()
+
+        # Pass all property owners to the template for selection
+        property_owners = PropertyOwner.objects.all()
+
+    return render(request, 'sales/add_property_and_owner.html', {
+        'user_form': user_form,
+        'owner_form': owner_form,
+        'property_form': property_form,
+        'property_owners': property_owners,  # Pass the property owners for selection
+    })
+
+
+
+-->
+

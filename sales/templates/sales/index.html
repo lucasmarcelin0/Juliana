@@ -215,6 +215,37 @@
 
 {% block content %}
 
+<!-- Buttons with correct data-page attributes -->
+<button data-page="page1">Disliked</button>
+<button data-page="page2">New</button>
+<button data-page="page3">Liked</button>
+
+<!-- Page content -->
+<div id="page1" style="display: none;">
+    <h1>Disliked</h1>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="page2" >
+    <h1>New</h1>
+
 
 <!-- Container for Property Cards -->
 <div id="properties-container" class="properties-container">
@@ -365,6 +396,59 @@
         <span class="close">&times;</span>
         <div id="modal-content" class="modal-content"></div>
     </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+<div id="page3" style="display: none;">
+    <h1>Liked</h1>
+</div>
+
+
+
+
+
+
+
+
+
+
+<!-- JavaScript -->
+<script>
+    // Function to show the selected page and hide the rest
+    function showPage(page) {
+        document.querySelectorAll('div[id^="page"]').forEach(div => {
+            div.style.display = 'none';  // Hide all pages
+        });
+
+        document.querySelector(`#${page}`).style.display = 'block';  // Show the selected page
+    }
+
+    // Add event listeners to buttons after the DOM has loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('button[data-page]').forEach(button => {
+            button.onclick = function() {
+                showPage(this.dataset.page);  // Show the page linked to the clicked button
+            }
+        });
+    });
+</script>
+
 {% endblock %}
 
 

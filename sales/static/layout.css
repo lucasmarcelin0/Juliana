@@ -1,0 +1,397 @@
+/* Top Navbar Styling */
+/* Top Navbar Styling */
+.top-navbar {
+    background-color: #4A90E2;  /* Use a color similar to the one in your image */
+    color: #fff;               
+    padding: 10px 0;           /* Less padding for a more compact look */
+    position: sticky;          /* Sticks to the top on scroll */
+    top: 0;
+    width: 100%;
+    z-index: 100;              /* Ensures it's above other elements */
+    display: flex;
+    justify-content: center;   /* Center the items */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Navbar Container */
+.navbar-container {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;         /* Limit max-width for a centered look */
+    justify-content: space-around;  /* Spread items evenly across the bar */
+    align-items: center;
+}
+
+/* Individual Navbar Item */
+.navbar-item {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+/* Icon Button Styles */
+.icon-button {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 24px;
+    transition: transform 0.2s, color 0.2s;
+}
+
+.icon-button:hover {
+    color: #f0f0f0;            /* Slightly lighter color on hover */
+    transform: scale(1.1);     /* Slight zoom-in on hover */
+}
+
+/* Icon Styling for Links */
+.navbar-item a {
+    color: #fff;
+    font-size: 24px;
+    transition: transform 0.2s, color 0.2s;
+}
+
+.navbar-item a:hover {
+    color: #f0f0f0;            /* Slightly lighter color on hover */
+    transform: scale(1.1);     /* Slight zoom-in on hover */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Container for all properties */
+.properties-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-around;
+}
+
+/* Individual property card for 2-column layout */
+.property-card {
+    flex: 1 1 calc(50% - 20px); /* 2-column layout with consistent gap */
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-sizing: border-box;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+/* Responsive adjustments for small screens (1 column) */
+@media (max-width: 768px) {
+    .property-card {
+        flex: 1 1 100%; /* 1-column layout for small screens */
+    }
+}
+
+
+
+
+
+
+/* Property Media Section */
+.property-media {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap; /* Allow wrapping in case of smaller screens */
+}
+
+/* Photo section styling */
+.property-photo {
+    flex: 1;
+    width: 100%; /* Make sure it takes full width if the card size changes */
+    max-width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.property-image {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+/* Video section styling */
+.property-video {
+    flex: 1;
+    width: 100%; /* Ensure full width if necessary */
+    max-width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #ccc;
+    height: 250px;
+    color: #999;
+}
+
+/* Main Property Information */
+.property-info {
+    margin-top: 15px;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 4px;
+}
+
+/* Additional Information */
+.property-info-extra {
+    background: #f1f1f1;
+    padding: 10px;
+    border-radius: 4px;
+    margin-top: 10px;
+    display: none; /* Ensure hidden by default */
+}
+
+/* Button to toggle additional info */
+button {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* Fullscreen modal styling */
+.fullscreen-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.modal-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 5% auto;
+    max-width: 90%;
+}
+
+.modal-content img {
+    width: 45%;
+    margin: 5px;
+    border-radius: 5px;
+}
+
+.close {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Responsive styling for larger screens */
+@media (min-width: 768px) {
+    .property-card {
+        width: 45%; /* Display two cards side by side on wider screens */
+    }
+}
+
+
+/* Photo section styling */
+.property-photo {
+    flex: 1;
+    max-height: 250px; /* Adjust this value as needed */
+    overflow: hidden; /* Hide anything that overflows */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.property-image {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;  /* Make sure images keep their aspect ratio */
+    height: auto; /* Make sure images keep their aspect ratio */
+    border-radius: 4px;
+    object-fit: cover; /* Ensures images don't distort */
+}
+
+
+
+
+
+/* Formulário de Filtro */
+.filter-form button {
+    padding: 10px 20px;
+    background-color: #4A90E2;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.filter-form button:hover {
+    background-color: #0056b3;
+}
+
+
+/* Formulário de Filtro (Inicialmente Oculto) */
+.hidden {
+    display: none;
+}
+
+
+
+
+
+
+
+
+.perfil-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.perfil-container h2 {
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+}
+
+.perfil-container p {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+
+
+
+
+
+
+/* Filter Form Container */
+.filter-form-container {
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 1200px; /* Increased width for a 4-column layout */
+    margin: 20px auto;
+    transition: all 0.3s ease;
+}
+
+/* Filter Form Styling (Form Fields) */
+.filter-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.filter-field {
+    flex: 1 1 calc(25% - 20px); /* 4-column layout */
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+
+.filter-field label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.filter-field input,
+.filter-field select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    outline: none;
+    font-size: 16px;
+}
+
+.filter-field input:focus,
+.filter-field select:focus {
+    border-color: #4A90E2;
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+}
+
+/* Apply Filters Button */
+#apply-filters {
+    padding: 12px 20px;
+    background-color: #4A90E2;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+    align-self: flex-start;
+    transition: background-color 0.3s ease;
+}
+
+#apply-filters:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive adjustments for medium screens (2-column layout) */
+@media (max-width: 1024px) {
+    .filter-field {
+        flex: 1 1 calc(50% - 20px); /* 2-column layout */
+    }
+
+    .filter-form-container {
+        padding: 15px;
+    }
+}
+
+/* Responsive adjustments for smaller screens (1-column layout) */
+@media (max-width: 768px) {
+    .filter-field {
+        flex: 1 1 100%; /* 1-column layout */
+    }
+
+    .filter-form-container {
+        padding: 15px;
+    }
+
+    #apply-filters {
+        width: 100%;
+        text-align: center;
+    }
+}

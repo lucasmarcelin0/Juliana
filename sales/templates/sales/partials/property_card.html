@@ -8,7 +8,7 @@
       {% if property.images.first %}
         <img src="{{ property.images.first.image.url }}"
              alt="Imagem do Imóvel"
-             class="img-fluid rounded shadow-sm w-100 h-100 object-fit-cover"
+             class="img-fluid rounded shadow-sm w-100 object-fit-cover"
              style="cursor:pointer; max-height: 300px;"
              onclick="openGallery({{ property.id }})">
       {% else %}
@@ -33,14 +33,14 @@
       {% endif %}
     </div>
 
-    <!-- Modal de Galeria -->
+    <!-- Galeria Modal -->
     {% if property.images.count > 0 %}
     <div id="gallery-modal-{{ property.id }}" class="gallery-modal d-none">
       <div class="gallery-backdrop" onclick="closeGallery({{ property.id }})"></div>
       <div class="gallery-content">
         <span class="gallery-close" onclick="closeGallery({{ property.id }})">&times;</span>
         {% for image in property.images.all %}
-          <img src="{{ image.image.url }}" class="gallery-image mb-2">
+          <img src="{{ image.image.url }}" class="gallery-image mb-3">
         {% endfor %}
       </div>
     </div>
@@ -71,44 +71,57 @@
 
   <!-- Detalhes -->
   <div id="additional-info-{{ property.id }}" class="property-info hidden mt-3 border-top pt-3 small">
-    <!-- ... mantenha as informações detalhadas como antes ... -->
+    <!-- Seu conteúdo de detalhes aqui -->
   </div>
 
   <!-- CSS -->
   <style>
     .gallery-modal {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.8); z-index: 9999;
-      display: flex; justify-content: center; align-items: center;
-      flex-wrap: wrap; padding: 2rem; overflow-y: auto;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.9);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow-y: auto;
     }
 
     .gallery-backdrop {
-      position: absolute; width: 100%; height: 100%;
-      background: transparent; top: 0; left: 0; z-index: 1;
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: transparent;
+      z-index: 1;
     }
 
     .gallery-content {
-      z-index: 2; max-width: 90%;
-      display: flex; flex-direction: column; align-items: center;
+      position: relative;
+      z-index: 2;
+      max-width: 90%;
+      max-height: 90%;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .gallery-image {
       max-width: 100%;
+      max-height: 90vh;
       border-radius: 8px;
       box-shadow: 0 0 10px #000;
     }
 
     .gallery-close {
-      font-size: 2rem;
+      font-size: 3rem;
       color: white;
       cursor: pointer;
       align-self: flex-end;
       margin-bottom: 1rem;
-    }
-
-    .object-fit-cover {
-      object-fit: cover;
     }
 
     .hidden {
@@ -144,12 +157,8 @@
             .then(data => {
               this.classList.toggle("btn-success", data.liked);
               this.classList.toggle("btn-outline-success", !data.liked);
-              const dislikeBtn = document.querySelector(`.dislike-btn[data-id="${propertyId}"]`);
-              if (dislikeBtn) {
-                dislikeBtn.classList.remove("btn-danger");
-                dislikeBtn.classList.add("btn-outline-danger");
-              }
-              document.getElementById(`property-${propertyId}`).remove(); // remove do DOM
+              document.getElementById(`property-${propertyId}`).remove(); // remove da aba atual
+              // Aqui você pode adicionar lógica para mover o card para a aba de "Curtidos"
             });
         });
       });
@@ -162,12 +171,8 @@
             .then(data => {
               this.classList.toggle("btn-danger", data.disliked);
               this.classList.toggle("btn-outline-danger", !data.disliked);
-              const likeBtn = document.querySelector(`.like-btn[data-id="${propertyId}"]`);
-              if (likeBtn) {
-                likeBtn.classList.remove("btn-success");
-                likeBtn.classList.add("btn-outline-success");
-              }
-              document.getElementById(`property-${propertyId}`).remove(); // remove do DOM
+              document.getElementById(`property-${propertyId}`).remove(); // remove da aba atual
+              // Aqui você pode adicionar lógica para mover o card para a aba de "Rejeitados"
             });
         });
       });

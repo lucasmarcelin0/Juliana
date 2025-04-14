@@ -60,64 +60,106 @@
   <button id="next-image" class="nav-arrow">&#10095;</button>
 </div>
 
-<style>
-  .hidden{display:none!important}
-  .properties-container{display:flex;flex-wrap:wrap;gap:1.5rem}
-  @media(max-width:768px){.properties-container{overflow-x:auto;flex-wrap:nowrap;scroll-snap-type:x mandatory}.property-card{flex:0 0 auto;width:80%;scroll-snap-align:start}}
-  .property-card{opacity:0;transform:translateY(20px);animation:fadeInUp .6s forwards}
-  .property-card:nth-child(1){animation-delay:0s}.property-card:nth-child(2){animation-delay:.1s}.property-card:nth-child(3){animation-delay:.2s}.property-card:nth-child(4){animation-delay:.3s}
-  @keyframes fadeInUp{to{opacity:1;transform:translateY(0)}}
-  /* Modal */
-  .fullscreen-modal{position:fixed;inset:0;width:100vw;height:100vh;background:rgba(0,0,0,.9);display:none;justify-content:center;align-items:center;z-index:9999}
-  .fullscreen-modal.active{display:flex!important}
-  .modal-content{max-width:90vw;max-height:90vh;display:flex;justify-content:center;align-items:center}
-  .modal-content img{max-width:90vw;max-height:85vh;border-radius:10px;animation:fade .3s forwards}
-  @keyframes fade{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
-  .nav-arrow{position:absolute;top:50%;transform:translateY(-50%);font-size:3rem;color:#fff;background:transparent;border:none;cursor:pointer;z-index:10000;padding:1rem}
-  #prev-image{left:15px}#next-image{right:15px}
-  .close{position:absolute;top:15px;right:25px;font-size:2rem;color:#fff;cursor:pointer;z-index:10001}
-</style>
-
 <script>
-let imageUrls=[],currentImageIndex=0;
+  let imageUrls = [];
+  let currentImageIndex = 0;
 
-function closeFullscreen(){const m=document.getElementById('fullscreen-modal');m.classList.add('hidden');m.classList.remove('active');imageUrls=[];currentImageIndex=0;document.getElementById('modal-content').innerHTML='';}
-function showImage(i){if(!imageUrls.length)return;const mc=document.getElementById('modal-content');if(i<0)i=imageUrls.length-1;if(i>=imageUrls.length)i=0;currentImageIndex=i;mc.innerHTML='';const img=document.createElement('img');img.src=imageUrls[currentImageIndex];mc.appendChild(img);}
+  document.addEventListener('DOMContentLoaded', () => {
 
-document.addEventListener('DOMContentLoaded',()=>{
-  // Alternar abas
-  document.querySelectorAll('button[data-page]').forEach(btn=>btn.addEventListener('click',()=>{
-    document.querySelectorAll('.property-tab').forEach(t=>t.classList.add('hidden'));
-    document.getElementById(btn.dataset.page).classList.remove('hidden');
-  }));
+    /* --------- Alternar abas --------- */
+    document.querySelectorAll('button[data-page]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.property-tab').forEach(t => t.classList.add('hidden'));
+        document.getElementById(btn.dataset.page).classList.remove('hidden');
+      });
+    });
 
-  // Delegação para like/dislike/details (funciona após mover card)
-  document.body.addEventListener('click',e=>{
-    // Curtir
-    if(e.target.closest('.like-btn')){
-      const btn=e.target.closest('.like-btn');const id=btn.dataset.id;fetch(`/like/${id}/`).then(r=>r.json()).then(()=>moveCard(id,'liked'));}
-    // Rejeitar
-    if(e.target.closest('.dislike-btn')){
-      const btn=e.target.closest('.dislike-btn');const id=btn.dataset.id;fetch(`/dislike/${id}/`).then(r=>r.json()).then(()=>moveCard(id,'disliked'));}
-    // Detalhes
-    if(e.target.closest('.details-btn')){
-      const id=e.target.closest('.details-btn').dataset.id;const sec=document.getElementById(`additional-info-${id}`);sec&&sec.classList.toggle('hidden');}
+    /* --------- Delegação de cliques --------- */
+    document.body.addEventListener('click', e => {
+
+      /* Curtir */
+      const like = e.target.closest('.like-btn');
+      if (like) {
+        const id = like.dataset.id;
+        fetch(`/like/${id}/`).then(() => moveCard(id, 'liked'));
+        return;
+      }
+
+      /* Rejeitar */
+      const dislike = e.target.closest('.dislike-btn');
+      if (dislike) {
+        const id = dislike.dataset.id;
+        fetch(`/dislike/${id}/`).then(() => moveCard(id, 'disliked'));
+        return;
+      }
+
+      /* Detalhes  */
+      const details = e.target.closest('.details-btn');
+      if (details) {
+        const id = details.dataset.id;
+        const sec = document.getElementById(`additional-info-${id}`);
+        if (sec) sec.classList.toggle('hidden');
+        return;
+      }
+
+      /* Thumbnail → abre modal */
+      const thumb = e.target.closest('.property-thumbnail');
+      if (thumb) {
+        imageUrls = JSON.parse(thumb.dataset.images);
+        currentImageIndex = 0;
+        showImage(0);
+        document.getElementById('fullscreen-modal').classList.add('active');
+        document.getElementById('fullscreen-modal').classList.remove('hidden');
+        return;
+      }
+
+      /* Fecha modal clicando no fundo */
+      if (e.target.id === 'fullscreen-modal') closeFullscreen();
+    });
+
+    /* --------- Controles do modal --------- */
+    document.getElementById('prev-image').addEventListener('click', e => {
+      e.stopPropagation();
+      showImage(currentImageIndex - 1);
+    });
+
+    document.getElementById('next-image').addEventListener('click', e => {
+      e.stopPropagation();
+      showImage(currentImageIndex + 1);
+    });
+
+    document.querySelector('#fullscreen-modal .close')
+            .addEventListener('click', e => { e.stopPropagation(); closeFullscreen(); });
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFullscreen(); });
   });
 
-  // Abrir modal imagem
-  document.body.addEventListener('click',e=>{
-    const thumb=e.target.closest('.property-thumbnail');
-    if(thumb){imageUrls=JSON.parse(thumb.dataset.images);currentImageIndex=0;showImage(0);document.getElementById('fullscreen-modal').classList.remove('hidden','active');document.getElementById('fullscreen-modal').classList.add('active');}}
-  );
+  /* ---------- helpers ---------- */
+  function moveCard(id, target) {
+    const card = document.getElementById(`property-${id}`);
+    if (!card) return;
+    card.remove();
+    document.getElementById(`container-${target}`).prepend(card);
+  }
 
-  // Modal controles
-  document.getElementById('prev-image').addEventListener('click',e=>{e.stopPropagation();showImage(currentImageIndex-1);});
-  document.getElementById('next-image').addEventListener('click',e=>{e.stopPropagation();showImage(currentImageIndex+1);});
-  document.querySelector('#fullscreen-modal .close').addEventListener('click',e=>{e.stopPropagation();closeFullscreen();});
-  document.getElementById('fullscreen-modal').addEventListener('click',e=>{if(e.target.id==='fullscreen-modal')closeFullscreen();});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeFullscreen();});
-});
+  function showImage(i) {
+    if (!imageUrls.length) return;
+    if (i < 0) i = imageUrls.length - 1;
+    if (i >= imageUrls.length) i = 0;
+    currentImageIndex = i;
 
-function moveCard(id,targetTab){const card=document.getElementById(`property-${id}`);if(!card)return;card.remove();const container=document.getElementById(`container-${targetTab}`);container.prepend(card);}
-</script>
+    const mc = document.getElementById('modal-content');
+    mc.innerHTML = `<img src="${imageUrls[currentImageIndex]}" />`;
+  }
+
+  function closeFullscreen() {
+    const m = document.getElementById('fullscreen-modal');
+    m.classList.add('hidden');
+    m.classList.remove('active');
+    imageUrls = [];
+    currentImageIndex = 0;
+    document.getElementById('modal-content').innerHTML = '';
+  }
+  </script>
+
 {% endblock %}

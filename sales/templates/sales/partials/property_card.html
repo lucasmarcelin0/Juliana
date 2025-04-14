@@ -1,6 +1,6 @@
-<div class="property-card shadow-sm rounded-4 border bg-white p-3 mb-4" id="property-{{ property.id }}">
+<div class="property-card shadow-sm rounded-4 border bg-white p-3 mb-4" id="property-{{ property.id }}" data-property-id="{{ property.id }}">
 
-  <!-- Mídia do imóvel -->
+  <!-- Mídia -->
   <div class="property-media row g-3 mb-3 align-items-stretch">
 
     <!-- Imagem -->
@@ -8,9 +8,9 @@
       {% if property.images.first %}
         <img src="{{ property.images.first.image.url }}"
              alt="Imagem do Imóvel"
-             class="img-fluid rounded shadow-sm w-100 object-fit-cover"
+             class="img-fluid rounded shadow-sm w-100 property-thumbnail"
              style="cursor:pointer; max-height: 300px;"
-             onclick="openGallery({{ property.id }})">
+             data-images='[{% for img in property.images.all %}"{{ img.image.url }}"{% if not forloop.last %},{% endif %}{% endfor %}]'>
       {% else %}
         <div class="bg-light rounded shadow-sm d-flex align-items-center justify-content-center" style="height: 220px;">
           <span class="text-muted">Sem imagem</span>
@@ -32,22 +32,9 @@
         </div>
       {% endif %}
     </div>
-
-    <!-- Galeria Modal -->
-    {% if property.images.count > 0 %}
-    <div id="gallery-modal-{{ property.id }}" class="gallery-modal d-none">
-      <div class="gallery-backdrop" onclick="closeGallery({{ property.id }})"></div>
-      <div class="gallery-content">
-        <span class="gallery-close" onclick="closeGallery({{ property.id }})">&times;</span>
-        {% for image in property.images.all %}
-          <img src="{{ image.image.url }}" class="gallery-image mb-3">
-        {% endfor %}
-      </div>
-    </div>
-    {% endif %}
   </div>
 
-  <!-- Informações principais -->
+  <!-- Infos principais -->
   <div class="property-info mb-3">
     <p class="mb-1"><i class="fas fa-map-marker-alt text-primary"></i>
       <strong>{{ property.street }}, {{ property.street_number }}</strong> - {{ property.neighborhood }}, {{ property.city }} - {{ property.state }}
@@ -71,111 +58,6 @@
 
   <!-- Detalhes -->
   <div id="additional-info-{{ property.id }}" class="property-info hidden mt-3 border-top pt-3 small">
-    <!-- Seu conteúdo de detalhes aqui -->
+    <!-- Detalhes vão aqui -->
   </div>
-
-  <!-- CSS -->
-  <style>
-    .gallery-modal {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0,0,0,0.9);
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      overflow-y: auto;
-    }
-
-    .gallery-backdrop {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: transparent;
-      z-index: 1;
-    }
-
-    .gallery-content {
-      position: relative;
-      z-index: 2;
-      max-width: 90%;
-      max-height: 90%;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .gallery-image {
-      max-width: 100%;
-      max-height: 90vh;
-      border-radius: 8px;
-      box-shadow: 0 0 10px #000;
-    }
-
-    .gallery-close {
-      font-size: 3rem;
-      color: white;
-      cursor: pointer;
-      align-self: flex-end;
-      margin-bottom: 1rem;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-  </style>
-
-  <!-- JS -->
-  <script>
-    function openGallery(id) {
-      const modal = document.getElementById(`gallery-modal-${id}`);
-      if (modal) modal.classList.remove("d-none");
-    }
-
-    function closeGallery(id) {
-      const modal = document.getElementById(`gallery-modal-${id}`);
-      if (modal) modal.classList.add("d-none");
-    }
-
-    function toggleDetails(id) {
-      const section = document.getElementById(`additional-info-${id}`);
-      if (section) {
-        section.classList.toggle("hidden");
-      }
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-      document.querySelectorAll('.like-btn').forEach(btn => {
-        btn.addEventListener("click", function () {
-          const propertyId = this.dataset.id;
-          fetch(`/like/${propertyId}/`)
-            .then(r => r.json())
-            .then(data => {
-              this.classList.toggle("btn-success", data.liked);
-              this.classList.toggle("btn-outline-success", !data.liked);
-              document.getElementById(`property-${propertyId}`).remove(); // remove da aba atual
-              // Aqui você pode adicionar lógica para mover o card para a aba de "Curtidos"
-            });
-        });
-      });
-
-      document.querySelectorAll('.dislike-btn').forEach(btn => {
-        btn.addEventListener("click", function () {
-          const propertyId = this.dataset.id;
-          fetch(`/dislike/${propertyId}/`)
-            .then(r => r.json())
-            .then(data => {
-              this.classList.toggle("btn-danger", data.disliked);
-              this.classList.toggle("btn-outline-danger", !data.disliked);
-              document.getElementById(`property-${propertyId}`).remove(); // remove da aba atual
-              // Aqui você pode adicionar lógica para mover o card para a aba de "Rejeitados"
-            });
-        });
-      });
-    });
-  </script>
 </div>

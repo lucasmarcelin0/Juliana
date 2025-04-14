@@ -177,40 +177,71 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     // Alternância de abas
-    const buttons = document.querySelectorAll('button[data-page]');
-    const tabs = document.querySelectorAll('.property-tab');
-
-    buttons.forEach(button => {
+    document.querySelectorAll('button[data-page]').forEach(button => {
       button.addEventListener('click', () => {
-        tabs.forEach(tab => tab.classList.add('hidden'));
-        const target = document.getElementById(button.dataset.page);
-        target.classList.remove('hidden');
+        document.querySelectorAll('.property-tab').forEach(tab => tab.classList.add('hidden'));
+        document.getElementById(button.dataset.page).classList.remove('hidden');
       });
+    });
+
+    // CURTIR / REJEITAR
+    document.querySelectorAll('.like-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const propertyId = this.dataset.id;
+        fetch(`/like/${propertyId}/`).then(r => r.json()).then(data => {
+          document.getElementById(`property-${propertyId}`).remove();
+        });
+      });
+    });
+
+    document.querySelectorAll('.dislike-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const propertyId = this.dataset.id;
+        fetch(`/dislike/${propertyId}/`).then(r => r.json()).then(data => {
+          document.getElementById(`property-${propertyId}`).remove();
+        });
+      });
+    });
+
+    // CLICAR NA IMAGEM PARA ABRIR MODAL
+    document.querySelectorAll('.property-thumbnail').forEach(img => {
+      img.addEventListener('click', function () {
+        const images = JSON.parse(this.dataset.images);
+        const modal = document.getElementById('fullscreen-modal');
+        const modalContent = document.getElementById('modal-content');
+
+        modalContent.innerHTML = ''; // limpa o conteúdo
+        images.forEach(url => {
+          const imageEl = document.createElement('img');
+          imageEl.src = url;
+          imageEl.style.margin = '1rem';
+          modalContent.appendChild(imageEl);
+        });
+
+        modal.classList.add('active');
+        modal.classList.remove('hidden');
+      });
+    });
+
+    // Fechar o modal ao clicar no X
+    document.querySelector('.fullscreen-modal .close').addEventListener('click', function (event) {
+      event.stopPropagation();
+      closeFullscreen();
+    });
+
+    // Fechar ao clicar fora
+    document.getElementById('fullscreen-modal').addEventListener('click', function (e) {
+      if (e.target === this) closeFullscreen();
     });
   });
 
-  // Modal de imagens
-  function showAllImages(div) {
-    const images = div.querySelectorAll('img');
-    const modalContent = document.getElementById('modal-content');
-    const modal = document.getElementById('fullscreen-modal');
-
-    modalContent.innerHTML = '';
-    images.forEach(img => {
-      const clone = img.cloneNode();
-      clone.classList.remove('hidden-image');
-      clone.style.margin = '0.5rem';
-      modalContent.appendChild(clone);
-    });
-
-    modal.classList.remove('hidden');
-    modal.classList.add('active');
+  function toggleDetails(id) {
+    const section = document.getElementById(`additional-info-${id}`);
+    if (section) {
+      section.classList.toggle("hidden");
+    }
   }
 
-  function closeFullscreen() {
-    const modal = document.getElementById('fullscreen-modal');
-    modal.classList.remove('active');
-    modal.classList.add('hidden');
-  }
-</script>
+  function closeFullscreen
+
 {% endblock %}

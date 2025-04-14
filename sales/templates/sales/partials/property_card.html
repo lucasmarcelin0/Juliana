@@ -1,88 +1,310 @@
 <!-- templates/sales/partials/property_card.html -->
-<div class="property-card shadow-sm rounded-4 border bg-white p-3 mb-4"
+<div class="property-card elevation-3 rounded-4 overflow-hidden bg-white position-relative"
      id="property-{{ property.id }}" data-property-id="{{ property.id }}">
 
-  <!-- Mídia (imagem + vídeo) -->
-  <div class="property-media row g-3 mb-3 align-items-stretch">
-    <!-- Imagem -->
-    <div class="col-md-6">
-      {% if property.images.first %}
-        <img src="{{ property.images.first.image.url }}"
-             class="img-fluid rounded shadow-sm w-100 property-thumbnail"
-             data-images='[{% for img in property.images.all %}"{{ img.image.url }}"{% if not forloop.last %},{% endif %}{% endfor %}]'
-             style="cursor:pointer;max-height:300px;">
-      {% else %}
-        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height:220px;">
-          <span class="text-muted">Sem imagem</span>
+  <!-- Status Badges -->
+  <div class="position-absolute top-0 end-0 z-1 mt-2 me-2 d-flex gap-2">
+    {% if property.sale_price %}
+      <span class="badge bg-success bg-opacity-90 text-white px-3 py-2 rounded-pill shadow-sm">Venda</span>
+    {% else %}
+      <span class="badge bg-primary bg-opacity-90 text-white px-3 py-2 rounded-pill shadow-sm">Aluguel</span>
+    {% endif %}
+    {% if property.video_url %}
+      <span class="badge bg-danger bg-opacity-90 text-white px-3 py-2 rounded-pill shadow-sm">
+        <i class="fas fa-video me-1"></i> Tour
+      </span>
+    {% endif %}
+  </div>
+
+  <!-- Image Carousel -->
+  <div class="property-media position-relative">
+    {% if property.images.all %}
+      <div class="property-carousel ratio ratio-16x9" id="carousel-{{ property.id }}">
+        {% for image in property.images.all %}
+          <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            <img src="{{ image.image.url }}"
+                 class="d-block w-100 h-100 object-fit-cover property-thumbnail"
+                 alt="Imagem do imóvel {{ forloop.counter }}"
+                 data-images='[{% for img in property.images.all %}"{{ img.image.url }}"{% if not forloop.last %},{% endif %}{% endfor %}]'>
+          </div>
+        {% endfor %}
+        <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ property.id }}" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ property.id }}" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+        <div class="carousel-indicators">
+          {% for image in property.images.all %}
+            <button type="button" data-bs-target="#carousel-{{ property.id }}"
+                    data-bs-slide-to="{{ forloop.counter0 }}"
+                    {% if forloop.first %}class="active" aria-current="true"{% endif %}
+                    aria-label="Slide {{ forloop.counter }}"></button>
+          {% endfor %}
         </div>
-      {% endif %}
+      </div>
+    {% else %}
+      <div class="no-image-placeholder ratio ratio-16x9 d-flex align-items-center justify-content-center bg-gradient">
+        <div class="text-center text-white">
+          <i class="fas fa-home fa-3x mb-3"></i>
+          <h4 class="mb-0">Imóvel sem imagens</h4>
+          <small>Fotos em breve</small>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Property Details -->
+  <div class="property-details p-3">
+    <!-- Address -->
+    <div class="d-flex align-items-start mb-2">
+      <i class="fas fa-map-marker-alt text-primary mt-1 me-2"></i>
+      <div>
+        <h3 class="h5 mb-0 text-dark">{{ property.street }}, {{ property.street_number }}</h3>
+        <p class="text-muted small mb-0">{{ property.neighborhood }}, {{ property.city }}</p>
+      </div>
     </div>
 
-    <!-- Vídeo -->
-    <div class="col-md-6">
+    <!-- Price -->
+    <div class="d-flex align-items-center mb-3">
+      <i class="fas fa-tag text-success me-2"></i>
+      <div>
+        <span class="h4 text-dark mb-0">
+          R$ {{ property.sale_price|default:property.rent_price|floatformat:2 }}
+        </span>
+        {% if property.condo_fee and property.condo_fee > 0 %}
+          <span class="text-muted small d-block">+ Condomínio: R$ {{ property.condo_fee|floatformat:2 }}/mês</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Quick Features -->
+    <div class="property-features d-flex flex-wrap gap-2 mb-3">
+      <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">
+        <i class="fas fa-bed text-primary me-1"></i> {{ property.bedrooms }} dorm.
+      </span>
+      <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">
+        <i class="fas fa-bath text-primary me-1"></i> {{ property.bathrooms }} banh.
+      </span>
+      <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">
+        <i class="fas fa-car text-primary me-1"></i> {{ property.garage_spots }} vaga(s)
+      </span>
+      <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">
+        <i class="fas fa-ruler-combined text-primary me-1"></i> {{ property.property_area|default:"-" }} m²
+      </span>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="d-flex justify-content-between gap-2 border-top pt-3">
+      <button class="btn btn-outline-danger flex-grow-1 dislike-btn" data-id="{{ property.id }}">
+        <i class="far fa-thumbs-down me-1"></i> Rejeitar
+      </button>
+      <button class="btn btn-outline-primary flex-grow-1 details-btn" data-id="{{ property.id }}">
+        <i class="fas fa-info-circle me-1"></i> Detalhes
+      </button>
+      <button class="btn btn-success flex-grow-1 like-btn" data-id="{{ property.id }}">
+        <i class="far fa-thumbs-up me-1"></i> Curtir
+      </button>
+    </div>
+
+    <!-- Contact Agent Button -->
+    <button class="btn btn-dark w-100 mt-3 contact-agent-btn" data-property-id="{{ property.id }}">
+      <i class="fas fa-phone-alt me-2"></i> Falar com Corretor
+    </button>
+  </div>
+
+  <!-- Additional Details (Hidden) -->
+  <div id="additional-info-{{ property.id }}" class="property-more-details p-3 border-top" style="display: none;">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <h5 class="text-dark mb-3"><i class="fas fa-home me-2"></i> Características</h5>
+        <ul class="list-unstyled">
+          <li class="mb-2"><strong>Área privativa:</strong> {{ property.private_area|default:"-" }} m²</li>
+          <li class="mb-2"><strong>Suítes:</strong> {{ property.suites|default:"-" }}</li>
+          <li class="mb-2"><strong>Tipo de vaga:</strong> {{ property.get_garage_type_display }}</li>
+          <li class="mb-2"><strong>Piscina:</strong> {{ property.has_pool|yesno:"Sim,Não" }}</li>
+          <li class="mb-2"><strong>Portaria:</strong> {{ property.get_has_gatehouse_display }}</li>
+        </ul>
+      </div>
+
+      <div class="col-md-6">
+        <h5 class="text-dark mb-3"><i class="fas fa-file-invoice-dollar me-2"></i> Valores</h5>
+        <ul class="list-unstyled">
+          <li class="mb-2"><strong>IPTU:</strong> R$ {{ property.iptu_value|default:"-" }}</li>
+          <li class="mb-2"><strong>Disponibilidade:</strong> {{ property.get_move_availability_display }}</li>
+          <li class="mb-2"><strong>Condição:</strong> {{ property.get_is_occupied_display }}</li>
+          <li class="mb-2"><strong>Acessibilidade:</strong> {{ property.accessibility|yesno:"Sim,Não" }}</li>
+        </ul>
+      </div>
+
+      {% if property.features %}
+      <div class="col-12">
+        <h5 class="text-dark mb-3"><i class="fas fa-star me-2"></i> Diferenciais</h5>
+        <div class="d-flex flex-wrap gap-2">
+          {% for feature in property.features.split %}
+            <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill">
+              {{ feature }}
+            </span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
       {% if property.video_url %}
-        <div class="ratio ratio-16x9 h-100">
-          <iframe src="{{ property.video_url }}" class="w-100 h-100 rounded border" allowfullscreen></iframe>
+      <div class="col-12">
+        <h5 class="text-dark mb-3"><i class="fas fa-video me-2"></i> Tour Virtual</h5>
+        <div class="ratio ratio-16x9 rounded-3 overflow-hidden">
+          <iframe src="{{ property.video_url }}" class="w-100 h-100" allowfullscreen></iframe>
         </div>
-      {% else %}
-        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height:220px;">
-          <span class="text-muted">Sem vídeo</span>
-        </div>
+      </div>
       {% endif %}
     </div>
-  </div>
-
-  <!-- Informações principais -->
-  <div class="property-info mb-3">
-    <p class="mb-1">
-      <i class="fas fa-map-marker-alt text-primary"></i>
-      <strong>{{ property.street }}, {{ property.street_number }}</strong> –
-      {{ property.neighborhood }}, {{ property.city }} – {{ property.state }}
-    </p>
-    <p class="mb-1">
-      <i class="fas fa-coins text-success"></i>
-      <strong>
-        R$
-        {{ property.sale_price|default:property.rent_price }}
-      </strong>
-      {% if property.sale_price %}
-        <span class="badge bg-success ms-2">Venda</span>
-      {% else %}
-        <span class="badge bg-primary ms-2">Aluguel</span>
-      {% endif %}
-    </p>
-  </div>
-
-  <!-- Botões de ação -->
-  <div class="d-flex justify-content-start gap-2 mb-3">
-    <button class="btn btn-outline-success btn-sm like-btn"   data-id="{{ property.id }}">🔥 Curtir</button>
-    <button class="btn btn-outline-danger  btn-sm dislike-btn" data-id="{{ property.id }}">💡 Rejeitar</button>
-    <button class="btn btn-outline-primary btn-sm details-btn" data-id="{{ property.id }}">📘 Detalhes</button>
-  </div>
-
-  <!-- Detalhes ocultos -->
-  <div id="additional-info-{{ property.id }}"
-       class="property-info hidden mt-3 border-top pt-3 small">
-
-    <div class="row g-2">
-      <div class="col-md-4"><strong>Área total:</strong> {{ property.property_area }} m²</div>
-      <div class="col-md-4"><strong>Quartos:</strong> {{ property.bedrooms }}</div>
-      <div class="col-md-4"><strong>Suítes:</strong> {{ property.suites }}</div>
-      <div class="col-md-4"><strong>Banheiros:</strong> {{ property.bathrooms }}</div>
-      <div class="col-md-4"><strong>Garagem:</strong> {{ property.garage_spots }} vaga(s)</div>
-      <div class="col-md-4"><strong>Tipo de vaga:</strong> {{ property.get_garage_type_display }}</div>
-      <div class="col-md-4"><strong>Piscina:</strong> {{ property.has_pool|yesno:"Sim,Não" }}</div>
-      <div class="col-md-4"><strong>Portaria:</strong> {{ property.get_has_gatehouse_display }}</div>
-      <div class="col-md-4"><strong>Condição:</strong> {{ property.get_is_occupied_display }}</div>
-      <div class="col-md-6"><strong>Acessibilidade:</strong> {{ property.accessibility }}</div>
-      <div class="col-md-6"><strong>Disponibilidade:</strong> {{ property.move_availability }}</div>
-      <div class="col-md-6"><strong>IPTU:</strong> R$ {{ property.iptu_value }}</div>
-      <div class="col-md-6"><strong>Condomínio:</strong> R$ {{ property.condo_fee }}</div>
-      <div class="col-12"><strong>Características:</strong> {{ property.features }}</div>
-      <div class="col-12"><strong>Descrição:</strong> {{ property.free_description }}</div>
-    </div>
-
-    <!-- Se quiser incluir propostas/lances -->
-    {% comment %}{% include 'sales/partials/bids_section.html' with property=property %}{% endcomment %}
   </div>
 </div>
+
+<style>
+.property-card {
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.property-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.property-carousel {
+  position: relative;
+  overflow: hidden;
+}
+
+.property-carousel img {
+  transition: transform 0.5s ease;
+}
+
+.property-card:hover .property-carousel img {
+  transform: scale(1.03);
+}
+
+.no-image-placeholder {
+  background: linear-gradient(135deg, #6e8efb 0%, #4a6cf7 100%);
+  color: white;
+}
+
+.property-more-details {
+  background-color: #f9fafb;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.elevation-3 {
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.object-fit-cover {
+  object-fit: cover;
+}
+
+.badge {
+  font-weight: 500;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  background-color: rgba(0,0,0,0.2);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.property-card:hover .carousel-control-prev,
+.property-card:hover .carousel-control-next {
+  opacity: 1;
+}
+
+.carousel-indicators {
+  bottom: 10px;
+}
+
+.carousel-indicators button {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(255,255,255,0.5);
+}
+
+.carousel-indicators button.active {
+  background-color: white;
+}
+
+.contact-agent-btn {
+  transition: all 0.3s ease;
+}
+
+.contact-agent-btn:hover {
+  background-color: #343a40;
+  transform: translateY(-2px);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize Bootstrap carousels
+  document.querySelectorAll('.property-carousel').forEach(carousel => {
+    new bootstrap.Carousel(carousel, {
+      interval: false,
+      wrap: true
+    });
+  });
+
+  // Details toggle functionality
+  document.querySelectorAll('.details-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const propertyId = this.getAttribute('data-id');
+      const detailsSection = document.getElementById(`additional-info-${propertyId}`);
+
+      if (detailsSection.style.display === 'none' || !detailsSection.style.display) {
+        detailsSection.style.display = 'block';
+        this.innerHTML = '<i class="fas fa-times me-1"></i> Fechar';
+      } else {
+        detailsSection.style.display = 'none';
+        this.innerHTML = '<i class="fas fa-info-circle me-1"></i> Detalhes';
+      }
+    });
+  });
+
+  // Contact agent button
+  document.querySelectorAll('.contact-agent-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const propertyId = this.getAttribute('data-property-id');
+      // Replace with your actual contact logic
+      alert(`Contato solicitado para o imóvel ID: ${propertyId}\nUm corretor entrará em contato em breve.`);
+
+      // Example: Open contact modal
+      // const contactModal = new bootstrap.Modal(document.getElementById('contactModal'));
+      // contactModal.show();
+    });
+  });
+
+  // Reinitialize image carousel click handlers
+  document.body.addEventListener('click', function(e) {
+    const thumb = e.target.closest('.property-thumbnail');
+    if (thumb) {
+      const images = JSON.parse(thumb.getAttribute('data-images'));
+      // Your existing carousel open code here
+      console.log('Opening carousel for images:', images);
+    }
+  });
+});
+</script>

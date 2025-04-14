@@ -2,37 +2,31 @@
 
   <!-- Mídia -->
   <div class="property-media row g-3 mb-3 align-items-stretch">
-
-    <!-- Imagem -->
     <div class="col-md-6">
       {% if property.images.first %}
         <img src="{{ property.images.first.image.url }}"
-             alt="Imagem do Imóvel"
              class="img-fluid rounded shadow-sm w-100 property-thumbnail"
-             style="cursor:pointer; max-height: 300px;"
-             data-images='[{% for img in property.images.all %}"{{ img.image.url }}"{% if not forloop.last %},{% endif %}{% endfor %}]'>
+             data-images='[{% for img in property.images.all %}"{{ img.image.url }}"{% if not forloop.last %},{% endif %}{% endfor %}]'
+             style="cursor: pointer; max-height: 300px;">
       {% else %}
-        <div class="bg-light rounded shadow-sm d-flex align-items-center justify-content-center" style="height: 220px;">
+        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 220px;">
           <span class="text-muted">Sem imagem</span>
         </div>
       {% endif %}
     </div>
-
-    <!-- Vídeo -->
     <div class="col-md-6">
       {% if property.video_url %}
         <div class="ratio ratio-16x9 h-100">
-          <iframe src="{{ property.video_url }}"
-                  allowfullscreen
-                  class="rounded border w-100 h-100"></iframe>
+          <iframe src="{{ property.video_url }}" class="w-100 h-100 rounded border" allowfullscreen></iframe>
         </div>
       {% else %}
-        <div class="bg-light rounded shadow-sm d-flex align-items-center justify-content-center" style="height: 220px;">
+        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 220px;">
           <span class="text-muted">Sem vídeo</span>
         </div>
       {% endif %}
     </div>
   </div>
+
 
   <!-- Infos principais -->
   <div class="property-info mb-3">

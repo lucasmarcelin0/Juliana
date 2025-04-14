@@ -1,8 +1,10 @@
+<!-- templates/sales/partials/property_card.html -->
 <div class="property-card shadow-sm rounded-4 border bg-white p-3 mb-4"
      id="property-{{ property.id }}" data-property-id="{{ property.id }}">
 
-  <!-- Mídia -->
+  <!-- Mídia (imagem + vídeo) -->
   <div class="property-media row g-3 mb-3 align-items-stretch">
+    <!-- Imagem -->
     <div class="col-md-6">
       {% if property.images.first %}
         <img src="{{ property.images.first.image.url }}"
@@ -16,6 +18,7 @@
       {% endif %}
     </div>
 
+    <!-- Vídeo -->
     <div class="col-md-6">
       {% if property.video_url %}
         <div class="ratio ratio-16x9 h-100">
@@ -29,14 +32,19 @@
     </div>
   </div>
 
-  <!-- Infos principais -->
+  <!-- Informações principais -->
   <div class="property-info mb-3">
-    <p class="mb-1"><i class="fas fa-map-marker-alt text-primary"></i>
-      <strong>{{ property.street }}, {{ property.street_number }}</strong> -
-      {{ property.neighborhood }}, {{ property.city }} - {{ property.state }}
+    <p class="mb-1">
+      <i class="fas fa-map-marker-alt text-primary"></i>
+      <strong>{{ property.street }}, {{ property.street_number }}</strong> –
+      {{ property.neighborhood }}, {{ property.city }} – {{ property.state }}
     </p>
-    <p class="mb-1"><i class="fas fa-coins text-success"></i>
-      <strong>R$ {{ property.sale_price|default:property.rent_price }}</strong>
+    <p class="mb-1">
+      <i class="fas fa-coins text-success"></i>
+      <strong>
+        R$
+        {{ property.sale_price|default:property.rent_price }}
+      </strong>
       {% if property.sale_price %}
         <span class="badge bg-success ms-2">Venda</span>
       {% else %}
@@ -45,16 +53,36 @@
     </p>
   </div>
 
-  <!-- Ações -->
+  <!-- Botões de ação -->
   <div class="d-flex justify-content-start gap-2 mb-3">
     <button class="btn btn-outline-success btn-sm like-btn"   data-id="{{ property.id }}">🔥 Curtir</button>
     <button class="btn btn-outline-danger  btn-sm dislike-btn" data-id="{{ property.id }}">💡 Rejeitar</button>
     <button class="btn btn-outline-primary btn-sm details-btn" data-id="{{ property.id }}">📘 Detalhes</button>
   </div>
 
-  <!-- Detalhes -->
+  <!-- Detalhes ocultos -->
   <div id="additional-info-{{ property.id }}"
        class="property-info hidden mt-3 border-top pt-3 small">
-    <!-- … seus detalhes … -->
+
+    <div class="row g-2">
+      <div class="col-md-4"><strong>Área total:</strong> {{ property.property_area }} m²</div>
+      <div class="col-md-4"><strong>Quartos:</strong> {{ property.bedrooms }}</div>
+      <div class="col-md-4"><strong>Suítes:</strong> {{ property.suites }}</div>
+      <div class="col-md-4"><strong>Banheiros:</strong> {{ property.bathrooms }}</div>
+      <div class="col-md-4"><strong>Garagem:</strong> {{ property.garage_spots }} vaga(s)</div>
+      <div class="col-md-4"><strong>Tipo de vaga:</strong> {{ property.get_garage_type_display }}</div>
+      <div class="col-md-4"><strong>Piscina:</strong> {{ property.has_pool|yesno:"Sim,Não" }}</div>
+      <div class="col-md-4"><strong>Portaria:</strong> {{ property.get_has_gatehouse_display }}</div>
+      <div class="col-md-4"><strong>Condição:</strong> {{ property.get_is_occupied_display }}</div>
+      <div class="col-md-6"><strong>Acessibilidade:</strong> {{ property.accessibility }}</div>
+      <div class="col-md-6"><strong>Disponibilidade:</strong> {{ property.move_availability }}</div>
+      <div class="col-md-6"><strong>IPTU:</strong> R$ {{ property.iptu_value }}</div>
+      <div class="col-md-6"><strong>Condomínio:</strong> R$ {{ property.condo_fee }}</div>
+      <div class="col-12"><strong>Características:</strong> {{ property.features }}</div>
+      <div class="col-12"><strong>Descrição:</strong> {{ property.free_description }}</div>
+    </div>
+
+    <!-- Se quiser incluir propostas/lances -->
+    {% comment %}{% include 'sales/partials/bids_section.html' with property=property %}{% endcomment %}
   </div>
 </div>

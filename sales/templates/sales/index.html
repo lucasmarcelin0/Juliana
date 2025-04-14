@@ -11,14 +11,14 @@
 
   <!-- Botões de navegação entre abas -->
   <div class="text-center my-4">
-    <button class="btn btn-outline-secondary mx-2" data-page="disliked">👎 Rejeitados</button>
+    <button class="btn btn-outline-secondary mx-2" data-page="disliked">🖕 Rejeitados</button>
     <button class="btn btn-outline-primary mx-2" data-page="new">🆕 Novos</button>
-    <button class="btn btn-outline-success mx-2" data-page="liked">👍 Curtidos</button>
+    <button class="btn btn-outline-success mx-2" data-page="liked">🕊 Curtidos</button>
   </div>
 
   <!-- Aba: Rejeitados -->
   <div id="disliked" class="property-tab hidden">
-    <h4 class="mb-3">👎 Imóveis Rejeitados</h4>
+    <h4 class="mb-3">🖕 Imóveis Rejeitados</h4>
     <div class="properties-container">
       {% for property in imos_disliked %}
         {% include 'sales/partials/property_card.html' with property=property %}
@@ -42,7 +42,7 @@
 
   <!-- Aba: Curtidos -->
   <div id="liked" class="property-tab hidden">
-    <h4 class="mb-3">👍 Imóveis Curtidos</h4>
+    <h4 class="mb-3">🕊 Imóveis Curtidos</h4>
     <div class="properties-container">
       {% for property in imos_liked %}
         {% include 'sales/partials/property_card.html' with property=property %}
@@ -54,81 +54,80 @@
 </div>
 
 <!-- Modal de Imagens -->
-<!-- Modal de Imagens -->
 <div id="fullscreen-modal" class="fullscreen-modal hidden">
-  <span class="close" onclick="closeFullscreen()">&times;</span>
+  <span class="close">&times;</span>
   <button id="prev-image" class="nav-arrow">&#10094;</button>
   <div id="modal-content" class="modal-content"></div>
   <button id="next-image" class="nav-arrow">&#10095;</button>
 </div>
 
-
 <!-- Estilo adicional -->
 <style>
-      .fullscreen-modal {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.85);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
+  .fullscreen-modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
 
-.fullscreen-modal.active {
-  display: flex !important;
-}
+  .fullscreen-modal.active {
+    display: flex !important;
+  }
 
-.modal-content {
-  max-width: 90vw;
-  max-height: 90vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+  .modal-content {
+    position: relative;
+    z-index: 10001;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
-.modal-content img {
-  max-width: 90vw;
-  max-height: 80vh;
-  border-radius: 10px;
-  animation: fadeIn 0.4s ease forwards;
-}
+  .modal-content img {
+    max-width: 90vw;
+    max-height: 80vh;
+    border-radius: 10px;
+    animation: fadeIn 0.4s ease forwards;
+  }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
-}
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
 
-.nav-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 3rem;
-  color: white;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  z-index: 10000;
-  padding: 1rem;
-}
+  .nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 3rem;
+    color: white;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 10000;
+    padding: 1rem;
+  }
 
-#prev-image { left: 20px; }
-#next-image { right: 20px; }
+  #prev-image { left: 20px; }
+  #next-image { right: 20px; }
 
-.close {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  color: white;
-  font-size: 2rem;
-  cursor: pointer;
-  z-index: 10001;
-}
+  .close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 10002;
+  }
 
-
-      .hidden {
+  .hidden {
     display: none !important;
   }
 
@@ -142,7 +141,6 @@
     gap: 1.5rem;
   }
 
-  /* 👉 Scroll horizontal para mobile */
   @media (max-width: 768px) {
     .properties-container {
       overflow-x: auto;
@@ -157,7 +155,6 @@
     }
   }
 
-  /* ✨ Animação de entrada suave */
   .property-card {
     opacity: 0;
     transform: translateY(20px);
@@ -175,69 +172,6 @@
       transform: translateY(0);
     }
   }
-
-  /* Modal fullscreen */
-  .fullscreen-modal {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(0,0,0,0.85);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-
-  .fullscreen-modal.active {
-    display: flex !important;
-  }
-
-  .fullscreen-modal .modal-content img {
-    max-height: 90vh;
-    max-width: 90vw;
-  }
-
-  .fullscreen-modal .close {
-    position: absolute;
-    top: 20px; right: 30px;
-    color: white;
-    font-size: 2rem;
-    cursor: pointer;
-  }
-
-  .hidden {
-    display: none !important;
-  }
-
-  .fullscreen-modal {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(0,0,0,0.85);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-
-  .fullscreen-modal.active {
-    display: flex !important;
-  }
-
-  .fullscreen-modal .modal-content img {
-    max-height: 90vh;
-    max-width: 90vw;
-  }
-
-  .fullscreen-modal .close {
-    position: absolute;
-    top: 20px; right: 30px;
-    color: white;
-    font-size: 2rem;
-    cursor: pointer;
-  }
-
-  .property-tab {
-    margin-top: 1rem;
-  }
 </style>
 
 <!-- Scripts de comportamento -->
@@ -249,7 +183,6 @@
     const buttons = document.querySelectorAll('button[data-page]');
     const tabs = document.querySelectorAll('.property-tab');
 
-    // Alternância de abas
     buttons.forEach(button => {
       button.addEventListener('click', () => {
         tabs.forEach(tab => tab.classList.add('hidden'));
@@ -257,7 +190,6 @@
       });
     });
 
-    // Like
     document.querySelectorAll('.like-btn').forEach(btn => {
       btn.addEventListener('click', function () {
         const id = this.dataset.id;
@@ -268,7 +200,6 @@
       });
     });
 
-    // Dislike
     document.querySelectorAll('.dislike-btn').forEach(btn => {
       btn.addEventListener('click', function () {
         const id = this.dataset.id;
@@ -279,7 +210,6 @@
       });
     });
 
-    // Imagem -> abrir modal
     document.querySelectorAll('.property-thumbnail').forEach(img => {
       img.addEventListener('click', function () {
         imageUrls = JSON.parse(this.dataset.images);
@@ -292,7 +222,6 @@
       });
     });
 
-    // Navegação
     document.getElementById('prev-image').addEventListener('click', function (e) {
       e.stopPropagation();
       showImage(currentImageIndex - 1);
@@ -304,22 +233,21 @@
     });
 
     document.addEventListener('click', function (e) {
-  // Fecha ao clicar no ❌
-  if (e.target.classList.contains('close')) {
-    e.stopPropagation();
-    closeFullscreen();
-  }
+      if (e.target.classList.contains('close')) {
+        e.stopPropagation();
+        closeFullscreen();
+      }
 
-  // Fecha ao clicar fora da imagem
-  const modal = document.getElementById('fullscreen-modal');
-  if (e.target.id === 'fullscreen-modal') {
-    closeFullscreen();
-  }
-});
+      const modal = document.getElementById('fullscreen-modal');
+      if (e.target.id === 'fullscreen-modal') {
+        closeFullscreen();
+      }
+    });
 
-
-    document.getElementById('fullscreen-modal').addEventListener('click', function (e) {
-      if (e.target.id === 'fullscreen-modal') closeFullscreen();
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        closeFullscreen();
+      }
     });
   });
 
@@ -346,6 +274,5 @@
     document.getElementById('modal-content').innerHTML = '';
   }
 </script>
-
 
 {% endblock %}

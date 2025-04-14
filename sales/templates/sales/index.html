@@ -11,8 +11,8 @@
   <!-- Navegação por abas -->
   <div class="text-center my-4">
     <button class="btn btn-outline-secondary mx-2" data-page="disliked">👎 Rejeitados</button>
-    <button class="btn btn-outline-primary  mx-2" data-page="new">🆕 Novos</button>
-    <button class="btn btn-outline-success  mx-2" data-page="liked">👍 Curtidos</button>
+    <button class="btn btn-outline-primary mx-2" data-page="new">🆕 Novos</button>
+    <button class="btn btn-outline-success mx-2" data-page="liked">👍 Curtidos</button>
   </div>
 
   <!-- Aba Rejeitados -->
@@ -53,19 +53,107 @@
 </div>
 
 <!-- Modal Fullscreen -->
-<div id="fullscreen-modal" class="fullscreen-modal hidden">
-  <span class="close">&times;</span>
-  <button id="prev-image" class="nav-arrow">&#10094;</button>
-  <div id="modal-content" class="modal-content"></div>
-  <button id="next-image" class="nav-arrow">&#10095;</button>
+<div id="fullscreen-modal" class="fullscreen-modal">
+  <div class="modal-container">
+    <span class="close">&times;</span>
+    <button id="prev-image" class="nav-arrow">&#10094;</button>
+    <div id="modal-content" class="modal-content"></div>
+    <button id="next-image" class="nav-arrow">&#10095;</button>
+  </div>
 </div>
+
+<style>
+  /* Fullscreen Modal Styles */
+  .fullscreen-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .fullscreen-modal.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .modal-container {
+    position: relative;
+    width: 90%;
+    max-width: 1200px;
+    height: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-content img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: opacity 0.3s ease;
+  }
+
+  .close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: white;
+    font-size: 35px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1001;
+  }
+
+  .nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-size: 50px;
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    cursor: pointer;
+    padding: 10px 20px;
+    z-index: 1001;
+    border-radius: 5px;
+  }
+
+  #prev-image {
+    left: 15px;
+  }
+
+  #next-image {
+    right: 15px;
+  }
+
+  .nav-arrow:hover {
+    background: rgba(0, 0, 0, 0.8);
+  }
+</style>
 
 <script>
   let imageUrls = [];
   let currentImageIndex = 0;
+  let isModalOpen = false;
 
   document.addEventListener('DOMContentLoaded', () => {
-
     /* --------- Alternar abas --------- */
     document.querySelectorAll('button[data-page]').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -76,7 +164,6 @@
 
     /* --------- Delegação de cliques --------- */
     document.body.addEventListener('click', e => {
-
       /* Curtir */
       const like = e.target.closest('.like-btn');
       if (like) {
@@ -93,7 +180,7 @@
         return;
       }
 
-      /* Detalhes  */
+      /* Detalhes */
       const details = e.target.closest('.details-btn');
       if (details) {
         const id = details.dataset.id;
@@ -105,16 +192,9 @@
       /* Thumbnail → abre modal */
       const thumb = e.target.closest('.property-thumbnail');
       if (thumb) {
-        imageUrls = JSON.parse(thumb.dataset.images);
-        currentImageIndex = 0;
-        showImage(0);
-        document.getElementById('fullscreen-modal').classList.add('active');
-        document.getElementById('fullscreen-modal').classList.remove('hidden');
+        openFullscreen(thumb);
         return;
       }
-
-      /* Fecha modal clicando no fundo */
-      if (e.target.id === 'fullscreen-modal') closeFullscreen();
     });
 
     /* --------- Controles do modal --------- */
@@ -129,9 +209,22 @@
     });
 
     document.querySelector('#fullscreen-modal .close')
-            .addEventListener('click', e => { e.stopPropagation(); closeFullscreen(); });
+            .addEventListener('click', e => {
+              e.stopPropagation();
+              closeFullscreen();
+            });
 
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFullscreen(); });
+    document.addEventListener('keydown', e => {
+      if (!isModalOpen) return;
+
+      if (e.key === 'Escape') {
+        closeFullscreen();
+      } else if (e.key === 'ArrowLeft') {
+        showImage(currentImageIndex - 1);
+      } else if (e.key === 'ArrowRight') {
+        showImage(currentImageIndex + 1);
+      }
+    });
   });
 
   /* ---------- helpers ---------- */
@@ -142,24 +235,56 @@
     document.getElementById(`container-${target}`).prepend(card);
   }
 
+  function openFullscreen(thumb) {
+    imageUrls = JSON.parse(thumb.dataset.images);
+    if (!imageUrls || !imageUrls.length) return;
+
+    currentImageIndex = 0;
+    showImage(0);
+
+    const modal = document.getElementById('fullscreen-modal');
+    modal.classList.add('active');
+    isModalOpen = true;
+
+    // Prevent scrolling on body when modal is open
+    document.body.style.overflow = 'hidden';
+  }
+
   function showImage(i) {
     if (!imageUrls.length) return;
+
+    // Handle wrap-around
     if (i < 0) i = imageUrls.length - 1;
     if (i >= imageUrls.length) i = 0;
-    currentImageIndex = i;
 
+    currentImageIndex = i;
     const mc = document.getElementById('modal-content');
-    mc.innerHTML = `<img src="${imageUrls[currentImageIndex]}" />`;
+
+    // Create new image element
+    const img = new Image();
+    img.src = imageUrls[currentImageIndex];
+    img.alt = "Imagem do imóvel";
+    img.onload = () => {
+      mc.innerHTML = '';
+      mc.appendChild(img);
+    };
   }
 
   function closeFullscreen() {
-    const m = document.getElementById('fullscreen-modal');
-    m.classList.add('hidden');
-    m.classList.remove('active');
-    imageUrls = [];
-    currentImageIndex = 0;
-    document.getElementById('modal-content').innerHTML = '';
+    const modal = document.getElementById('fullscreen-modal');
+    modal.classList.remove('active');
+    isModalOpen = false;
+
+    // Restore body scrolling
+    document.body.style.overflow = '';
+
+    // Small delay before clearing to allow animation to finish
+    setTimeout(() => {
+      imageUrls = [];
+      currentImageIndex = 0;
+      document.getElementById('modal-content').innerHTML = '';
+    }, 300);
   }
-  </script>
+</script>
 
 {% endblock %}

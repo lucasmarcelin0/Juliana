@@ -303,10 +303,20 @@
       showImage(currentImageIndex + 1);
     });
 
-    document.querySelector('#fullscreen-modal .close').addEventListener('click', function (e) {
-      e.stopPropagation();
-      closeFullscreen();
-    });
+    document.addEventListener('click', function (e) {
+  // Fecha ao clicar no ❌
+  if (e.target.classList.contains('close')) {
+    e.stopPropagation();
+    closeFullscreen();
+  }
+
+  // Fecha ao clicar fora da imagem
+  const modal = document.getElementById('fullscreen-modal');
+  if (e.target.id === 'fullscreen-modal') {
+    closeFullscreen();
+  }
+});
+
 
     document.getElementById('fullscreen-modal').addEventListener('click', function (e) {
       if (e.target.id === 'fullscreen-modal') closeFullscreen();

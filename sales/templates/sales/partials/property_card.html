@@ -16,45 +16,25 @@
     {% endif %}
   </div>
 
-  <!-- Image Carousel -->
-  <div class="property-media position-relative">
-    {% if property.images.all %}
-      <div class="property-carousel ratio ratio-16x9" id="carousel-{{ property.id }}">
-        {% for image in property.images.all %}
-          <div class="carousel-item {% if forloop.first %}active{% endif %}">
-            <img src="{{ image.image.url }}"
-                 class="d-block w-100 h-100 object-fit-cover property-thumbnail"
-                 alt="Imagem do imóvel {{ forloop.counter }}"
-                 data-images='[{% for img in property.images.all %}"{{ img.image.url }}"{% if not forloop.last %},{% endif %}{% endfor %}]'>
+  <!-- Main Image (Only shown if images exist) -->
+  {% if property.images.first %}
+    <div class="property-media position-relative">
+      <div class="ratio ratio-16x9">
+        <img src="{{ property.images.first.image.url }}"
+             class="img-fluid w-100 h-100 object-fit-cover property-thumbnail"
+             data-images='[{% for img in property.images.all %}"{{ img.image.url }}"{% if not forloop.last %},{% endif %}{% endfor %}]'
+             alt="{{ property.street }}, {{ property.neighborhood }}"
+             style="cursor: pointer;">
+        {% if property.images.count > 1 %}
+          <div class="position-absolute bottom-0 end-0 mb-2 me-2">
+            <span class="badge bg-dark bg-opacity-75 text-white px-3 py-2 rounded-pill">
+              <i class="fas fa-images me-1"></i> {{ property.images.count }}
+            </span>
           </div>
-        {% endfor %}
-        <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ property.id }}" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ property.id }}" data-bs-slide="next">
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="visually-hidden">Next</span>
-        </button>
-        <div class="carousel-indicators">
-          {% for image in property.images.all %}
-            <button type="button" data-bs-target="#carousel-{{ property.id }}"
-                    data-bs-slide-to="{{ forloop.counter0 }}"
-                    {% if forloop.first %}class="active" aria-current="true"{% endif %}
-                    aria-label="Slide {{ forloop.counter }}"></button>
-          {% endfor %}
-        </div>
+        {% endif %}
       </div>
-    {% else %}
-      <div class="no-image-placeholder ratio ratio-16x9 d-flex align-items-center justify-content-center bg-gradient">
-        <div class="text-center text-white">
-          <i class="fas fa-home fa-3x mb-3"></i>
-          <h4 class="mb-0">Imóvel sem imagens</h4>
-          <small>Fotos em breve</small>
-        </div>
-      </div>
-    {% endif %}
-  </div>
+    </div>
+  {% endif %}
 
   <!-- Property Details -->
   <div class="property-details p-3">
@@ -118,6 +98,7 @@
   <!-- Additional Details (Hidden) -->
   <div id="additional-info-{{ property.id }}" class="property-more-details p-3 border-top" style="display: none;">
     <div class="row g-3">
+      <!-- Features Column -->
       <div class="col-md-6">
         <h5 class="text-dark mb-3"><i class="fas fa-home me-2"></i> Características</h5>
         <ul class="list-unstyled">
@@ -129,6 +110,7 @@
         </ul>
       </div>
 
+      <!-- Financial Column -->
       <div class="col-md-6">
         <h5 class="text-dark mb-3"><i class="fas fa-file-invoice-dollar me-2"></i> Valores</h5>
         <ul class="list-unstyled">
@@ -139,6 +121,7 @@
         </ul>
       </div>
 
+      <!-- Features -->
       {% if property.features %}
       <div class="col-12">
         <h5 class="text-dark mb-3"><i class="fas fa-star me-2"></i> Diferenciais</h5>
@@ -152,6 +135,7 @@
       </div>
       {% endif %}
 
+      <!-- Video Tour -->
       {% if property.video_url %}
       <div class="col-12">
         <h5 class="text-dark mb-3"><i class="fas fa-video me-2"></i> Tour Virtual</h5>
@@ -175,36 +159,21 @@
   box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
 
-.property-carousel {
+.property-media {
   position: relative;
   overflow: hidden;
 }
 
-.property-carousel img {
+.property-media img {
   transition: transform 0.5s ease;
 }
 
-.property-card:hover .property-carousel img {
+.property-card:hover .property-media img {
   transform: scale(1.03);
-}
-
-.no-image-placeholder {
-  background: linear-gradient(135deg, #6e8efb 0%, #4a6cf7 100%);
-  color: white;
 }
 
 .property-more-details {
   background-color: #f9fafb;
-  animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.elevation-3 {
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
 .object-fit-cover {
@@ -213,39 +182,6 @@
 
 .badge {
   font-weight: 500;
-}
-
-.carousel-control-prev,
-.carousel-control-next {
-  background-color: rgba(0,0,0,0.2);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  top: 50%;
-  transform: translateY(-50%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.property-card:hover .carousel-control-prev,
-.property-card:hover .carousel-control-next {
-  opacity: 1;
-}
-
-.carousel-indicators {
-  bottom: 10px;
-}
-
-.carousel-indicators button {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  border: none;
-  background-color: rgba(255,255,255,0.5);
-}
-
-.carousel-indicators button.active {
-  background-color: white;
 }
 
 .contact-agent-btn {
@@ -260,25 +196,23 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Initialize Bootstrap carousels
-  document.querySelectorAll('.property-carousel').forEach(carousel => {
-    new bootstrap.Carousel(carousel, {
-      interval: false,
-      wrap: true
-    });
-  });
-
-  // Details toggle functionality
+  // Details toggle functionality - Fixed version
   document.querySelectorAll('.details-btn').forEach(btn => {
     btn.addEventListener('click', function() {
       const propertyId = this.getAttribute('data-id');
       const detailsSection = document.getElementById(`additional-info-${propertyId}`);
+      const icon = this.querySelector('i');
 
+      // Toggle display
       if (detailsSection.style.display === 'none' || !detailsSection.style.display) {
         detailsSection.style.display = 'block';
+        icon.classList.remove('fa-info-circle');
+        icon.classList.add('fa-times');
         this.innerHTML = '<i class="fas fa-times me-1"></i> Fechar';
       } else {
         detailsSection.style.display = 'none';
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-info-circle');
         this.innerHTML = '<i class="fas fa-info-circle me-1"></i> Detalhes';
       }
     });
@@ -290,21 +224,23 @@ document.addEventListener('DOMContentLoaded', function() {
       const propertyId = this.getAttribute('data-property-id');
       // Replace with your actual contact logic
       alert(`Contato solicitado para o imóvel ID: ${propertyId}\nUm corretor entrará em contato em breve.`);
-
-      // Example: Open contact modal
-      // const contactModal = new bootstrap.Modal(document.getElementById('contactModal'));
-      // contactModal.show();
     });
   });
 
-  // Reinitialize image carousel click handlers
+  // Image click handler for carousel
   document.body.addEventListener('click', function(e) {
     const thumb = e.target.closest('.property-thumbnail');
     if (thumb) {
       const images = JSON.parse(thumb.getAttribute('data-images'));
-      // Your existing carousel open code here
-      console.log('Opening carousel for images:', images);
+      openImageCarousel(images);
     }
   });
 });
+
+function openImageCarousel(images) {
+  // Your existing carousel implementation
+  console.log('Opening carousel with images:', images);
+  // This should show your fullscreen carousel with all images
+  // Make sure this function is properly defined in your main JS file
+}
 </script>

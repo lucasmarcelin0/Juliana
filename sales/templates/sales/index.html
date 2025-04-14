@@ -54,13 +54,80 @@
 </div>
 
 <!-- Modal de Imagens -->
-<div id="fullscreen-modal" class="fullscreen-modal hidden" onclick="closeFullscreen()">
-  <span class="close">&times;</span>
+<!-- Modal de Imagens -->
+<div id="fullscreen-modal" class="fullscreen-modal hidden">
+  <span class="close" onclick="closeFullscreen()">&times;</span>
+  <button id="prev-image" class="nav-arrow">&#10094;</button>
   <div id="modal-content" class="modal-content"></div>
+  <button id="next-image" class="nav-arrow">&#10095;</button>
 </div>
+
 
 <!-- Estilo adicional -->
 <style>
+      .fullscreen-modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.fullscreen-modal.active {
+  display: flex !important;
+}
+
+.modal-content {
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content img {
+  max-width: 90vw;
+  max-height: 80vh;
+  border-radius: 10px;
+  animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 3rem;
+  color: white;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 10000;
+  padding: 1rem;
+}
+
+#prev-image { left: 20px; }
+#next-image { right: 20px; }
+
+.close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 10001;
+}
+
+
       .hidden {
     display: none !important;
   }
@@ -175,42 +242,100 @@
 
 <!-- Scripts de comportamento -->
 <script>
+  let imageUrls = [];
+  let currentImageIndex = 0;
+
   document.addEventListener('DOMContentLoaded', function () {
-    // Alternância de abas
     const buttons = document.querySelectorAll('button[data-page]');
     const tabs = document.querySelectorAll('.property-tab');
 
+    // Alternância de abas
     buttons.forEach(button => {
       button.addEventListener('click', () => {
         tabs.forEach(tab => tab.classList.add('hidden'));
-        const target = document.getElementById(button.dataset.page);
-        target.classList.remove('hidden');
+        document.getElementById(button.dataset.page).classList.remove('hidden');
       });
+    });
+
+    // Like
+    document.querySelectorAll('.like-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const id = this.dataset.id;
+        fetch(`/like/${id}/`).then(r => r.json()).then(() => {
+          const card = document.getElementById(`property-${id}`);
+          card?.remove();
+        });
+      });
+    });
+
+    // Dislike
+    document.querySelectorAll('.dislike-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const id = this.dataset.id;
+        fetch(`/dislike/${id}/`).then(r => r.json()).then(() => {
+          const card = document.getElementById(`property-${id}`);
+          card?.remove();
+        });
+      });
+    });
+
+    // Imagem -> abrir modal
+    document.querySelectorAll('.property-thumbnail').forEach(img => {
+      img.addEventListener('click', function () {
+        imageUrls = JSON.parse(this.dataset.images);
+        currentImageIndex = 0;
+        showImage(currentImageIndex);
+
+        const modal = document.getElementById('fullscreen-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('active');
+      });
+    });
+
+    // Navegação
+    document.getElementById('prev-image').addEventListener('click', function (e) {
+      e.stopPropagation();
+      showImage(currentImageIndex - 1);
+    });
+
+    document.getElementById('next-image').addEventListener('click', function (e) {
+      e.stopPropagation();
+      showImage(currentImageIndex + 1);
+    });
+
+    document.querySelector('#fullscreen-modal .close').addEventListener('click', function (e) {
+      e.stopPropagation();
+      closeFullscreen();
+    });
+
+    document.getElementById('fullscreen-modal').addEventListener('click', function (e) {
+      if (e.target.id === 'fullscreen-modal') closeFullscreen();
     });
   });
 
-  // Modal de imagens
-  function showAllImages(div) {
-    const images = div.querySelectorAll('img');
+  function showImage(index) {
     const modalContent = document.getElementById('modal-content');
-    const modal = document.getElementById('fullscreen-modal');
+    if (!imageUrls.length) return;
+
+    if (index < 0) index = imageUrls.length - 1;
+    if (index >= imageUrls.length) index = 0;
+    currentImageIndex = index;
 
     modalContent.innerHTML = '';
-    images.forEach(img => {
-      const clone = img.cloneNode();
-      clone.classList.remove('hidden-image');
-      clone.style.margin = '0.5rem';
-      modalContent.appendChild(clone);
-    });
-
-    modal.classList.remove('hidden');
-    modal.classList.add('active');
+    const img = document.createElement('img');
+    img.src = imageUrls[currentImageIndex];
+    modalContent.appendChild(img);
   }
 
   function closeFullscreen() {
     const modal = document.getElementById('fullscreen-modal');
-    modal.classList.remove('active');
     modal.classList.add('hidden');
+    modal.classList.remove('active');
+    imageUrls = [];
+    currentImageIndex = 0;
+    document.getElementById('modal-content').innerHTML = '';
   }
 </script>
+
+
 {% endblock %}

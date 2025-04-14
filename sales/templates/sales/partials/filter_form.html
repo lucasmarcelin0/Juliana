@@ -1,5 +1,5 @@
 {% block filter %}
-<!-- Formulário de Filtro -->
+<!-- Filter Form Container -->
 <div id="filter-form-container" class="filter-form-container">
     <div class="filter-form-content">
         <form id="filter-form" class="filter-form" method="GET" action="{% url 'sales:filter_properties' %}">
@@ -295,27 +295,143 @@ document.addEventListener('DOMContentLoaded', function() {
     if (filterForm) {
         filterForm.addEventListener('submit', function(e) {
             e.preventDefault();
-
-            const formData = new FormData(filterForm);
-            const searchParams = new URLSearchParams();
-
-            for (const [key, value] of formData.entries()) {
-                if (value) {
-                    searchParams.append(key, value);
-                }
-            }
-
-            window.location.href = `${filterForm.action}?${searchParams.toString()}`;
+            applyFilters();
         });
 
         const resetBtn = document.getElementById('reset-filters');
         if (resetBtn) {
             resetBtn.addEventListener('click', function() {
                 filterForm.reset();
-                window.location.href = filterForm.action;
+                applyFilters();
             });
         }
     }
 });
+
+function applyFilters() {
+    const filterForm = document.getElementById('filter-form');
+    const formData = new FormData(filterForm);
+    const searchParams = new URLSearchParams();
+
+    // Build query string
+    for (const [key, value] of formData.entries()) {
+        if (value) {
+            searchParams.append(key, value);
+        }
+    }
+
+    // Show loading state
+    const activeTab = document.querySelector('.property-tab:not(.hidden)');
+    const container = activeTab.querySelector('.properties-container');
+    container.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Carregando...</span></div></div>';
+
+    // Make AJAX request
+    fetch(`${filterForm.action}?${searchParams.toString()}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        updatePropertyCards(data.properties, container.id);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        container.innerHTML = '<p class="text-danger">Ocorreu um erro ao carregar os imóveis.</p>';
+    });
+}
+
+function updatePropertyCards(properties, containerId) {
+    const container = document.getElementById(containerId);
+
+    if (!properties || properties.length === 0) {
+        container.innerHTML = '<p class="text-muted">Nenhum imóvel encontrado com esses filtros.</p>';
+        return;
+    }
+
+    // Clear container
+    container.innerHTML = '';
+
+    // Create HTML for each property
+    properties.forEach(property => {
+        const cardHtml = `
+            <div class="property-card" id="property-${property.id}">
+                <div class="property-thumbnail" data-images='${JSON.stringify(property.images.map(img => img.url))}'>
+                    ${property.images.length > 0 ?
+                        `<img src="${property.images[0].url}" alt="${property.street}">` :
+                        '<div class="no-image">Sem imagem</div>'}
+                </div>
+                <div class="property-details">
+                    <h3>${property.street}, ${property.street_number}</h3>
+                    <p>${property.neighborhood}, ${property.city}</p>
+                    <div class="property-features">
+                        <span>${property.bedrooms} 🛏️</span>
+                        <span>${property.bathrooms} 🚿</span>
+                        <span>${property.garage_spots} 🚗</span>
+                    </div>
+                    <div class="property-prices">
+                        <strong>R$ ${property.sale_price || '0,00'}</strong>
+                    </div>
+                    <div class="property-actions">
+                        <button class="btn btn-outline-danger dislike-btn" data-id="${property.id}">👎</button>
+                        <button class="btn btn-outline-primary details-btn" data-id="${property.id}">Detalhes</button>
+                        <button class="btn btn-outline-success like-btn" data-id="${property.id}">👍</button>
+                    </div>
+                    <div id="additional-info-${property.id}" class="additional-info hidden">
+                        <!-- Additional details here -->
+                    </div>
+                </div>
+            </div>
+        `;
+
+        container.insertAdjacentHTML('beforeend', cardHtml);
+    });
+
+    // Reattach event listeners to new cards
+    attachCardEventListeners();
+}
+
+function attachCardEventListeners() {
+    // Like button
+    document.body.addEventListener('click', e => {
+        const like = e.target.closest('.like-btn');
+        if (like) {
+            const id = like.dataset.id;
+            fetch(`/like/${id}/`).then(() => moveCard(id, 'liked'));
+            return;
+        }
+
+        // Dislike button
+        const dislike = e.target.closest('.dislike-btn');
+        if (dislike) {
+            const id = dislike.dataset.id;
+            fetch(`/dislike/${id}/`).then(() => moveCard(id, 'disliked'));
+            return;
+        }
+
+        // Details button
+        const details = e.target.closest('.details-btn');
+        if (details) {
+            const id = details.dataset.id;
+            const sec = document.getElementById(`additional-info-${id}`);
+            if (sec) sec.classList.toggle('hidden');
+            return;
+        }
+
+        // Thumbnail click (for image carousel)
+        const thumb = e.target.closest('.property-thumbnail');
+        if (thumb) {
+            // Your existing image carousel code here
+            return;
+        }
+    });
+}
+
+function moveCard(id, target) {
+    const card = document.getElementById(`property-${id}`);
+    if (!card) return;
+    card.remove();
+    document.getElementById(`container-${target}`).prepend(card);
+}
 </script>
 {% endblock %}

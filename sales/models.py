@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
+
+
+
 class PropertyOwner(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=15, verbose_name="Celular", default="(00) 00000-0000")
@@ -170,7 +173,7 @@ class Bid(models.Model):
         ('refused', 'Recusado'),
         ('counteroffer', 'Contra-Oferta')
     ]
-    
+
     property = models.ForeignKey(Property, related_name="bids", on_delete=models.CASCADE)
     user = models.ForeignKey(User, related_name="bids", on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -178,11 +181,44 @@ class Bid(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     counteroffer = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # For counteroffers
     date = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
         return f"Bid by {self.user.username} - R$ {self.amount}"
 
 
+
+
+
+
+class UserProfile(models.Model):
+    ROLE_CHOICES = [
+        ('cliente', 'Cliente'),
+        ('corretor', 'Corretor'),
+        ('advogada', 'Advogada'),
+    ]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='cliente')
+
+    def __str__(self):
+        return f"{self.user.username} ({self.get_role_display()})"
+
+
+class DealStep(models.Model):
+    STEP_STATUS_CHOICES = [
+        ('todo', 'A iniciar'),
+        ('in_progress', 'Em andamento'),
+        ('done', 'Concluído'),
+    ]
+
+    deal = models.ForeignKey('Deal', related_name='steps', on_delete=models.CASCADE)
+    description = models.CharField(max_length=255)
+    status = models.CharField(max_length=20, choices=STEP_STATUS_CHOICES, default='todo')
+    attachment = models.FileField(upload_to='deal_steps/', null=True, blank=True)
+    comment = models.TextField(blank=True, null=True, verbose_name="Comentário da advogada")  # 👈 novo campo
+
+    def __str__(self):
+        return f"{self.description} ({self.get_status_display()})"
 
 
 class Deal(models.Model):
@@ -191,6 +227,10 @@ class Deal(models.Model):
     buyer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='deals', verbose_name="Comprador")
     date_closed = models.DateTimeField(auto_now_add=True, verbose_name="Data de Fechamento")
     status = models.CharField(max_length=50, choices=[('pending', 'Pendente'), ('closed', 'Fechado')], verbose_name="Status")
+    date_closed = models.DateTimeField(auto_now_add=True, verbose_name="Data de Fechamento")
+    status = models.CharField(max_length=50, choices=[('pending', 'Pendente'), ('closed', 'Fechado')], verbose_name="Status")
+    closed_at = models.DateTimeField(null=True, blank=True, verbose_name="Fechado em")  # 👈 novo campo
+
 
     def __str__(self):
         return f"Negócio para {self.property.title} - {self.status}"

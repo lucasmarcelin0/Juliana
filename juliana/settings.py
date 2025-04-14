@@ -27,6 +27,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://localhost:8000",
+    "https://localhost:8001",         # <- adiciona essa nova
+    "https://*.cs50.io"               # <- se estiver usando cs50.dev
+]
+
 
 # Application definition
 
@@ -60,8 +66,9 @@ AUTHENTICATION_BACKENDS = (
 )
 
 # Optional configurations
-ACCOUNT_AUTHENTICATION_METHOD = 'username'  # Can be 'username' or 'email'
-ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_LOGIN_METHODS = {'username'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+
 ACCOUNT_EMAIL_VERIFICATION = 'optional'  # Can be 'mandatory', 'optional', or 'none'
 LOGIN_REDIRECT_URL = '/'  # Where to redirect users after login
 LOGOUT_REDIRECT_URL = '/accounts/login/'  # Redirect after logout
@@ -79,8 +86,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'allauth.account.middleware.AccountMiddleware',  # Required for Allauth
-    
+
 ]
+
+
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

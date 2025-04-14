@@ -7,25 +7,25 @@
 
     <div class="user-profile">
         <h2>Perfil do Usuário</h2>
-        
+
             <!-- Exibir o nome completo se disponível, caso contrário, exibir o nome de usuário -->
-        <p><strong>Nome:</strong> 
+        <p><strong>Nome:</strong>
             {% if user.get_full_name %}
                 {{ user.get_full_name }}
             {% else %}
                 {{ user.username }}
             {% endif %}
         </p>
-        
+
         <!-- Display user's email -->
         <p><strong>Email:</strong> {{ user.email }}</p>
-        
-        
+
+
         <!-- Display PropertyOwner related information -->
         {% if user.propertyowner %}
             <!-- Display phone number from PropertyOwner -->
-            <p><strong>Celular:</strong> {{ user.propertyowner.phone_number }}</p>
-            
+            <p><strong>Celular:</strong> {{ property_owner.phone_number }}</p>
+
         {% else %}
             <p>Informações adicionais não disponíveis.</p>
         {% endif %}
@@ -43,6 +43,8 @@
         <!-- Container for Property Cards -->
         <div id="properties-container" class="properties-container">
             {% for imo in user_properties %}
+            <a href="{% url 'sales:editar_imovel' imo.id %}">✏️ Editar imóvel</a>
+
                 <div class="property-card">
 
                     <!-- Property Media Section -->
@@ -61,10 +63,10 @@
                         <!-- Video Section (Right Column Placeholder) -->
                         <div class="property-video">
                             {% if imo.video_url %}
-                            <iframe 
-                                src="{{ imo.video_url }}" 
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            <iframe
+                                src="{{ imo.video_url }}"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowfullscreen>
                             </iframe>
                             {% else %}
@@ -83,7 +85,7 @@
                     <!-- Additional Information Button/Icon -->
                     <button type="button" class="details-button" onclick="toggleDetails({{ forloop.counter }})">Ver mais detalhes</button>
                     <div id="additional-info-{{ forloop.counter }}" class="property-info hidden">
-                    
+
                         <!-- Additional Property Information (Hidden by Default) -->
                         <p><strong>Área do Imóvel:</strong> {{ imo.property_area }} m²</p>
                         <p><strong>Quartos:</strong> {{ imo.bedrooms }}</p>

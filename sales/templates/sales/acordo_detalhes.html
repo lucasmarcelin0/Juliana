@@ -1,0 +1,67 @@
+{% extends 'sales/layout.html' %}
+{% block title %}Detalhes do Acordo{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>📄 Acordo para {{ acordo.property.street }}, {{ acordo.property.city }}</h2>
+
+  <div class="progress mb-4" style="height: 25px;">
+    <div class="progress-bar bg-success" role="progressbar" style="width: {{ progresso }}%;" aria-valuenow="{{ progresso }}" aria-valuemin="0" aria-valuemax="100">
+      {{ progresso }}%
+    </div>
+  </div>
+
+  <h4>Etapas</h4>
+  <ul class="list-group mb-4">
+    {% for step in steps %}
+      <li class="list-group-item">
+        <form method="POST" action="{% url 'sales:atualizar_etapa' step.id %}" enctype="multipart/form-data" class="d-flex align-items-center justify-content-between gap-2">
+          {% csrf_token %}
+          <div class="flex-grow-1">
+            <strong>{{ step.description }}</strong><br>
+            {% if step.attachment %}
+              <a href="{{ step.attachment.url }}" target="_blank">📎 Ver anexo</a><br>
+            {% endif %}
+          </div>
+
+          <div class="d-flex align-items-center gap-2">
+            <select name="status" class="form-select form-select-sm">
+              <option value="todo" {% if step.status == 'todo' %}selected{% endif %}>A iniciar</option>
+              <option value="in_progress" {% if step.status == 'in_progress' %}selected{% endif %}>Em andamento</option>
+              <option value="done" {% if step.status == 'done' %}selected{% endif %}>Concluído</option>
+            </select>
+            <button type="submit" class="btn btn-sm btn-primary">Atualizar</button>
+        </form>
+        <form method="POST" action="{% url 'sales:deletar_etapa' step.id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-danger">🗑️</button>
+        </form>
+          </div>
+      </li>
+    {% empty %}
+      <li class="list-group-item">Nenhuma etapa cadastrada ainda.</li>
+    {% endfor %}
+  </ul>
+
+  <h4>Adicionar nova etapa</h4>
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-primary">Adicionar</button>
+  </form>
+
+  {% if progresso == 100 and acordo.status != 'closed' %}
+    <form method="POST" class="mt-4">
+      {% csrf_token %}
+      <input type="hidden" name="fechar_acordo" value="1">
+      <button class="btn btn-success">✅ Marcar Acordo como Concluído</button>
+    </form>
+  {% elif acordo.status == 'closed' %}
+    <div class="alert alert-success mt-4">
+      ✅ Este acordo foi concluído com sucesso.
+    </div>
+  {% endif %}
+
+  <a href="{% url 'sales:painel_juridico' %}" class="btn btn-link mt-4">← Voltar ao painel</a>
+</div>
+{% endblock %}

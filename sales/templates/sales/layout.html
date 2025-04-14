@@ -2,61 +2,126 @@
 
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
+    <meta charset="UTF-8">
+    <title>{% block title %}MajiMóveis{% endblock %}</title>
+
+    <!-- FontAwesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- Estilos personalizados -->
     <link rel="stylesheet" href="{% static 'layout.css' %}">
-    
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            background-color: #f9f9f9;
+        }
+
+        header.top-navbar {
+            background-color: #ffffff;
+            padding: 12px 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: center;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        .navbar-container {
+            display: flex;
+            gap: 28px;
+            align-items: center;
+        }
+
+        .navbar-item a,
+        .icon-button {
+            text-decoration: none;
+            color: #333;
+            font-size: 22px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .navbar-item a:hover,
+        .icon-button:hover {
+            color: #007BFF;
+            transform: scale(1.1);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+    </style>
 </head>
 
 <body>
-    <!-- Header Section -->
-<!-- Header Section -->
+
+<!-- 🔝 Navbar Superior -->
 <header class="top-navbar">
     <div class="navbar-container">
-        <!-- Profile Icon -->
-        <div class="navbar-item">
-            <a href="/perfil">
+
+        <!-- Ícone de Perfil -->
+        <div class="navbar-item" title="Perfil">
+            <a href="{% url 'sales:perfil' %}">
                 <i class="fas fa-user-circle"></i>
             </a>
         </div>
 
-<!-- Filter Icon -->
-<div class="navbar-item">
-    <a href="/">
-        <button class="filter-button icon-button">
-            <i class="fas fa-search"></i>
-        </button>
-    </a>
-</div>
+        <!-- Botão de Filtro (index ou abre filtro) -->
+        <div class="navbar-item" title="Filtrar Imóveis">
+            <button class="icon-button" id="filter-toggle-btn">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
 
-        <!-- Add Property Icon -->
-        <div class="navbar-item">
-            <a href="/admin/sales/property/add/">
+        <!-- Adicionar Imóvel -->
+        <div class="navbar-item" title="Adicionar Imóvel">
+            <a href="{% url 'sales:cadastrar_imovel' %}">
                 <i class="fas fa-plus-circle"></i>
             </a>
         </div>
+
     </div>
 </header>
 
-<!-- Link to FontAwesome for Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<!-- 🔽 Conteúdo Principal -->
+<main>
+    {% block filter %}{% endblock %}
+    {% block content %}{% endblock %}
+</main>
 
-</header>
+<!-- Scripts -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const filterButton = document.getElementById("filter-toggle-btn");
+    const isOnIndex = window.location.pathname === "/";
 
-    <!-- Main Content Section -->
-    <main>
+    if (filterButton) {
+      filterButton.addEventListener("click", function () {
+        if (!isOnIndex) {
+          window.location.href = "/";
+        } else {
+          const formContainer = document.getElementById("filter-form-container");
+          if (formContainer) {
+            formContainer.classList.toggle("hidden");
+          }
+        }
+      });
+    }
+  });
+</script>
 
-        {% block filter %}
-        {% endblock %}
-
-
-        {% block content %}
-        {% endblock %}
-    </main>
-
-
-
-    <script src="{% static 'sales/scripts.js' %}"></script>
+<script src="{% static 'sales/scripts.js' %}"></script>
 </body>
-
 </html>

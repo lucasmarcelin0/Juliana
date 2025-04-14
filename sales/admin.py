@@ -2,7 +2,14 @@ from django import forms
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from .models import Property, PropertyImage, Bid, Deal, PropertyOwner
+from .models import Property, PropertyImage, Bid, Deal, PropertyOwner, UserProfile
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'role')
+    list_filter = ('role',)
+
+
 
 # Customizing how PropertyOwner is displayed in the admin panel
 class PropertyOwnerAdmin(admin.ModelAdmin):

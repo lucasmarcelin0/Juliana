@@ -1,0 +1,63 @@
+<!-- sales/partials/bids_section.html -->
+
+<!-- Seção de Proposta -->
+<h3>Proposta!</h3>
+<form method="post" action="">
+  {% csrf_token %}
+  <input type="hidden" name="property_id" value="{{ property.id }}">
+
+  <label for="amount">Valor:</label>
+  <input type="number" name="amount" min="0" step="0.01" placeholder="R$ 0,00" required>
+
+  <label for="description">Condições de Pagamento:</label>
+  <div class="payment-options">
+    <label><input type="radio" name="payment_conditions" value="A vista"> A vista</label><br>
+    <label><input type="radio" name="payment_conditions" value="Fundo de Garantia + recurso Próprio"> FGTS + Recurso Próprio</label><br>
+    <label><input type="radio" name="payment_conditions" value="Recurso Próprio + Financiamento"> Recurso + Financiamento</label><br>
+    <label><input type="radio" name="payment_conditions" value="Recurso próprio + Fundo de Garantia + Financiamento"> Tudo junto</label>
+  </div>
+
+  <button type="submit">Enviar Lance</button>
+</form>
+
+<!-- Lances Existentes -->
+<h4>Lances Atuais</h4>
+<ul>
+  {% for bid in property.bids.all %}
+    <li>
+      {{ bid.user.username }} ofereceu R$ {{ bid.amount }} - {{ bid.description }}
+
+      {% if user == bid.user or user == property.owner %}
+        {% if bid.status == 'counteroffer' %}
+          <p>Proprietário fez contra-oferta de R$ {{ bid.counteroffer }}</p>
+          <form method="POST" action="">
+            {% csrf_token %}
+            <input type="hidden" name="bid_id" value="{{ bid.id }}">
+            <button type="submit" name="bid_action" value="accept">Aceitar</button>
+            <button type="submit" name="bid_action" value="refuse">Recusar</button>
+          </form>
+
+        {% elif bid.status == 'accepted' %}
+          <p>Lance Aceito</p>
+
+        {% elif bid.status == 'refused' %}
+          <p>Lance Recusado</p>
+
+        {% else %}
+          <form method="POST" action="">
+            {% csrf_token %}
+            <input type="hidden" name="bid_id" value="{{ bid.id }}">
+            <button type="submit" name="bid_action" value="accept">Aceitar</button>
+            <button type="submit" name="bid_action" value="refuse">Recusar</button>
+            <input type="number" name="counteroffer" placeholder="Contra-Oferta">
+            <button type="submit" name="bid_action" value="counteroffer">Enviar</button>
+          </form>
+        {% endif %}
+      {% else %}
+        <p>Lance está em análise pelo proprietário.</p>
+      {% endif %}
+    </li>
+  {% empty %}
+    <li>Nenhum lance realizado ainda.</li>
+  {% endfor %}
+</ul>

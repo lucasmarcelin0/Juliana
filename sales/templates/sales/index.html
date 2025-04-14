@@ -1,457 +1,216 @@
 {% extends 'sales/layout.html' %}
 
-{% block title %}Encontre seu Imóvel{% endblock %}
-
+{% block title %}MajiMóveis | Encontre o imóvel ideal{% endblock %}
 
 {% block filter %}
-<!-- Formulário de Filtro (Inicialmente Oculto) -->
- <!-- Filter Form Container -->
-
-    
-<div id="filter-form-container" class="filter-form-container hidden" method="GET" action="{% url 'sales:filter_properties' %}">
-
-    <div class="filter-form-content">
-
-    <form id="filter-form" class="filter-form" method="GET" action="{% url 'sales:filter_properties' %}">
-
-        <!-- Informações de Disponibilidade e Valores -->
-        <div class="filter-field">
-            <label for="min_price">Preço Mínimo:</label>
-            <input type="number" id="min_price" name="min_price" placeholder="Preço Mínimo">
-        </div>
-
-        <div class="filter-field">
-            <label for="max_price">Preço Máximo:</label>
-            <input type="number" id="max_price" name="max_price" placeholder="Preço Máximo">
-        </div>
-
-        <!-- Endereço do imóvel -->
-        <div class="filter-field">
-            <label for="location">Localização (Cidade ou Bairro):</label>
-            <input type="text" id="location" name="location" placeholder="Cidade ou Bairro">
-        </div>
-
-        <!-- Tipo de Imóvel -->
-        <div class="filter-field">
-            <label for="property_type">Tipo de Imóvel:</label>
-            <select id="property_type" name="property_type">
-                <option value="">Todos</option>
-                <option value="apartment">Apartamento</option>
-                <option value="house">Casa</option>
-                <option value="land">Lote</option>
-                <option value="farm">Fazenda</option>
-                <option value="wahehouse">Galpão</option>
-                <option value="commercial">Comercial</option>
-            </select>
-        </div>
-
-        <!-- Área útil e privativa -->
-        <div class="filter-field">
-            <label for="property_area_min">Área útil mínima (m²):</label>
-            <input type="number" id="property_area_min" name="property_area_min" placeholder="Área útil mínima (m²)">
-        </div>
-
-        <div class="filter-field">
-            <label for="property_area_max">Área útil máxima (m²):</label>
-            <input type="number" id="property_area_max" name="property_area_max" placeholder="Área útil máxima (m²)">
-        </div>
-
-        <div class="filter-field">
-            <label for="private_area_min">Área privativa mínima (m²):</label>
-            <input type="number" id="private_area_min" name="private_area_min" placeholder="Área privativa mínima (m²)">
-        </div>
-
-        <div class="filter-field">
-            <label for="private_area_max">Área privativa máxima (m²):</label>
-            <input type="number" id="private_area_max" name="private_area_max" placeholder="Área privativa máxima (m²)">
-        </div>
-
-        <!-- Características do imóvel -->
-        <div class="filter-field">
-            <label for="bedrooms">Dormitórios (incluindo suítes):</label>
-            <input type="number" id="bedrooms" name="bedrooms" placeholder="Dormitórios">
-        </div>
-
-        <div class="filter-field">
-            <label for="suites">Suítes:</label>
-            <input type="number" id="suites" name="suites" placeholder="Suítes">
-        </div>
-
-        <div class="filter-field">
-            <label for="bathrooms">Banheiros:</label>
-            <input type="number" id="bathrooms" name="bathrooms" placeholder="Banheiros">
-        </div>
-
-        <div class="filter-field">
-            <label for="garage_spots">Vagas de garagem:</label>
-            <input type="number" id="garage_spots" name="garage_spots" placeholder="Vagas de garagem">
-        </div>
-
-        <!-- Adereços e características -->
-        <div class="filter-field">
-            <label for="features">Adereços (separados por vírgula):</label>
-            <input type="text" id="features" name="features" placeholder="Ex: piscina, jardim">
-        </div>
-
-        <div class="filter-field">
-            <label for="is_covered">Cobertura:</label>
-            <select id="is_covered" name="is_covered">
-                <option value="">Todos</option>
-                <option value="yes">Sim</option>
-                <option value="no">Não</option>
-            </select>
-        </div>
-
-        <!-- Vagas de garagem e portaria -->
-        <div class="filter-field">
-            <label for="garage_type">Tipo de Vaga:</label>
-            <select id="garage_type" name="garage_type">
-                <option value="">Todos</option>
-                <option value="covered">Coberta</option>
-                <option value="free">Livre</option>
-                <option value="covered_and_free">Coberta e Livre</option>
-                <option value="none">Nem Coberta nem Livre</option>
-            </select>
-        </div>
-
-        <div class="filter-field">
-            <label for="has_pool">Piscina:</label>
-            <select id="has_pool" name="has_pool">
-                <option value="">Todos</option>
-                <option value="yes">Sim</option>
-                <option value="no">Não</option>
-            </select>
-        </div>
-
-        <div class="filter-field">
-            <label for="has_gatehouse">Portaria:</label>
-            <select id="has_gatehouse" name="has_gatehouse">
-                <option value="">Todos</option>
-                <option value="24h">24 h</option>
-                <option value="daytime">Diurna</option>
-                <option value="night">Noturna</option>
-                <option value="none">Sem portaria</option>
-            </select>
-        </div>
-
-        <!-- Condição do imóvel e acessibilidade -->
-        <div class="filter-field">
-            <label for="is_occupied">Ocupação:</label>
-            <select id="is_occupied" name="is_occupied">
-                <option value="">Todos</option>
-                <option value="vacant">Está vago</option>
-                <option value="owner">Proprietário mora</option>
-                <option value="tenant">Inquilino mora</option>
-            </select>
-        </div>
-
-        <div class="filter-field">
-            <label for="access">Acesso:</label>
-            <select id="access" name="access">
-                <option value="">Todos</option>
-                <option value="Key">Chave</option>
-                <option value="Biometry">Biometria</option>
-                <option value="Password">Senha</option>
-            </select>
-        </div>
-
-        <div class="filter-field">
-            <label for="accessibility">Acessibilidade:</label>
-            <select id="accessibility" name="accessibility">
-                <option value="">Todos</option>
-                <option value="yes">Sim</option>
-                <option value="no">Não</option>
-            </select>
-        </div>
-
-        <!-- Disponibilidade de mudança -->
-        <div class="filter-field">
-            <label for="move_availability">Disponibilidade de mudança:</label>
-            <select id="move_availability" name="move_availability">
-                <option value="">Todos</option>
-                <option value="immediate">Imediata</option>
-                <option value="30_days">30 dias</option>
-                <option value="60_days">60 dias</option>
-                <option value="other">Outro</option>
-            </select>
-        </div>
-
-        <!-- Valores adicionais -->
-        <div class="filter-field">
-            <label for="min_sale_price">Valor de venda mínimo:</label>
-            <input type="number" id="min_sale_price" name="min_sale_price" placeholder="Valor de venda mínimo">
-        </div>
-
-        <div class="filter-field">
-            <label for="max_sale_price">Valor de venda máximo:</label>
-            <input type="number" id="max_sale_price" name="max_sale_price" placeholder="Valor de venda máximo">
-        </div>
-
-        <div class="filter-field">
-            <label for="min_iptu_value">Valor de IPTU mínimo:</label>
-            <input type="number" id="min_iptu_value" name="min_iptu_value" placeholder="Valor de IPTU mínimo">
-        </div>
-
-        <div class="filter-field">
-            <label for="max_iptu_value">Valor de IPTU máximo:</label>
-            <input type="number" id="max_iptu_value" name="max_iptu_value" placeholder="Valor de IPTU máximo">
-        </div>
-
-        <div class="filter-field">
-            <label for="min_condo_fee">Valor do condomínio mínimo:</label>
-            <input type="number" id="min_condo_fee" name="min_condo_fee" placeholder="Valor do condomínio mínimo">
-        </div>
-
-        <div class="filter-field">
-            <label for="max_condo_fee">Valor do condomínio máximo:</label>
-            <input type="number" id="max_condo_fee" name="max_condo_fee" placeholder="Valor do condomínio máximo">
-        </div>
-
-        <button type="button" id="apply-filters">Aplicar Filtros</button>
-</form>
-</div>
-</div>
-        {% endblock %}
-
-{% block content %}
-
-<!-- Buttons with correct data-page attributes -->
-<button data-page="page1">Disliked</button>
-<button data-page="page2">New</button>
-<button data-page="page3">Liked</button>
-
-<!-- Page content -->
-<div id="page1" style="display: none;">
-    <h1>Disliked</h1>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div id="page2" >
-    <h1>New</h1>
-
-
-<!-- Container for Property Cards -->
-<div id="properties-container" class="properties-container">
-
-    {% for imo in imos %}
-        <div class="property-card">
-
-            <!-- Property Media Section -->
-            <div class="property-media">
-                <!-- Photo Section (Left Column) -->
-                <div class="property-photo" onclick="showAllImages(this)">
-                    {% for image in imo.images.all %}
-                        {% if forloop.first %}
-                            <img src="{{ image.image.url }}" alt="Property Image" class="property-image first-image">
-                        {% else %}
-                            <img src="{{ image.image.url }}" alt="Property Image" class="property-image hidden-image">
-                        {% endif %}
-                    {% endfor %}
-                </div>
-
-                <!-- Video Section (Right Column Placeholder) -->
-                <div class="property-video">
-                    {% if imo.video_url %}
-                    <iframe 
-                        src="{{ imo.video_url }}" 
-                        frameborder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowfullscreen>
-                    </iframe>
-                    {% else %}
-                        <p>Video Section Coming Soon</p>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Property Essential Information Section (Always Visible) -->
-            <div class="property-info">
-                <p><strong>Endereço:</strong> {{ imo.street }}, {{ imo.street_number }}, {{ imo.neighborhood }}, {{ imo.city }}, {{ imo.state }}</p>
-                <p><strong>Preço:</strong> R$ {{ imo.sale_price|default:imo.rent_price }}</p>
-                <p><strong>Alugar/Comprar:</strong> {% if imo.sale_price %} Comprar {% else %} Alugar {% endif %}</p>
-            </div>
-
-            <!-- Additional Information Button/Icon -->
-            <button type="button" class="details-button" onclick="toggleDetails({{ forloop.counter }})">Ver mais detalhes</button>
-            <div id="additional-info-{{ forloop.counter }}" class="property-info hidden">
-            
-                <!-- Additional Property Information (Hidden by Default) -->
-                <p><strong>Área do Imóvel:</strong> {{ imo.property_area }} m²</p>
-                <p><strong>Quartos:</strong> {{ imo.bedrooms }}</p>
-                <p><strong>Suítes:</strong> {{ imo.suites }}</p>
-                <p><strong>Banheiros:</strong> {{ imo.bathrooms }}</p>
-                <p><strong>Características:</strong> {{ imo.features }}</p>
-                <p><strong>Área Privativa:</strong> {{ imo.private_area }} m²</p>
-                <p><strong>Vagas de Garagem:</strong> {{ imo.garage_spots }}</p>
-                <p><strong>Tipo de Garagem:</strong> {{ imo.get_garage_type_display }}</p>
-                <p><strong>Tem Piscina:</strong> {{ imo.has_pool }}</p>
-                <p><strong>Portaria:</strong> {{ imo.get_has_gatehouse_display }}</p>
-                <p><strong>Condição:</strong> {{ imo.get_is_occupied_display }}</p>
-                <p><strong>Acessibilidade:</strong> {{ imo.accessibility }}</p>
-                <p><strong>Data de Disponibilidade para Mudança:</strong> {{ imo.move_availability }}</p>
-                <p><strong>Preço do Aluguel:</strong> R$ {{ imo.rent_price }}</p>
-                <p><strong>Preço de Venda:</strong> R$ {{ imo.sale_price }}</p>
-                <p><strong>Valor do IPTU:</strong> R$ {{ imo.iptu_value }}</p>
-                <p><strong>Taxa de Condomínio:</strong> R$ {{ imo.condo_fee }}</p>
-                <p><strong>Descrição Livre:</strong> {{ imo.free_description }}</p>
-
-                               <!-- Section for Bidding -->
-                               <h3>Proposta!</h3>
-                            <form method="post" action="">
-                                {% csrf_token %}
-                                <input type="hidden" name="property_id" value="{{ imo.id }}">
-                                <label for="amount">Valor:</label>
-                                <input type="number" name="amount" min="0" step="0.01" placeholder="R$ 0,00" required>
-                                <label for="description">Condições de Pagamento:</label>
-                              
-<div class="payment-options">
-    <label>
-        <input type="radio" name="payment_conditions" value="A vista"> A vista
-    </label><br>
-    <label>
-        <input type="radio" name="payment_conditions" value="Fundo de Garantia + recurso Próprio"> Fundo de Garantia + recurso Próprio
-    </label><br>
-    <label>
-        <input type="radio" name="payment_conditions" value="Recurso Próprio + Financiamento"> Recurso Próprio + Financiamento
-    </label><br>
-    <label>
-        <input type="radio" name="payment_conditions" value="Recurso próprio + Fundo de Garantia + Financiamento"> Recurso próprio + Fundo de Garantia + Financiamento
-    </label>
-</div>
-
-                                <button type="submit">Enviar Lance</button>
-                            </form>
-                            
-               
-                       <!-- Existing Bids Section -->
-        <h4>Lances Atuais</h4>
-        <ul>
-            {% for bid in imo.bids.all %}
-                <li>
-                    {{ bid.user.username }} ofereceu R$ {{ bid.amount }} - {{ bid.description }}
-
-                    <!-- Display for the user who made the bid or the property owner -->
-                    {% if user == bid.user or user == imo.owner %}
-                        {% if bid.status == 'counteroffer' %}
-                            O proprietário fez uma contra-oferta de R$ {{ bid.counteroffer }}.
-                            <form method="POST" action="">
-                                {% csrf_token %}
-                                <input type="hidden" name="bid_id" value="{{ bid.id }}">
-                                <button type="submit" name="bid_action" value="accept">Aceitar</button>
-                                <button type="submit" name="bid_action" value="refuse">Recusar</button>
-                            </form>
-                        {% elif bid.status == 'accepted' %}
-                            <p>Lance Aceito</p>
-                        {% elif bid.status == 'refused' %}
-                            <p>Lance Recusado</p>
-                        {% else %}
-                            <form method="POST" action="">
-                                {% csrf_token %}
-                                <input type="hidden" name="bid_id" value="{{ bid.id }}">
-                                <button type="submit" name="bid_action" value="accept">Aceitar</button>
-                                <button type="submit" name="bid_action" value="refuse">Recusar</button>
-                                <input type="number" name="counteroffer" placeholder="Fazer Contra-Oferta">
-                                <button type="submit" name="bid_action" value="counteroffer">Enviar Contra-Oferta</button>
-                            </form>
-                        {% endif %}
-                    {% else %}
-                        <p>Lance está em análise pelo proprietário.</p>
-                    {% endif %}
-                </li>
-            {% empty %}
-                <li>Nenhum lance realizado ainda.</li>
-            {% endfor %}
-        </ul>
-
-                
-
-            </div>
-        </div>
-    {% endfor %}
-</div>
-
-
-
-
-
-    <!-- Fullscreen Modal for Images -->
-    <div id="fullscreen-modal" class="fullscreen-modal" onclick="closeFullscreen()">
-        <span class="close">&times;</span>
-        <div id="modal-content" class="modal-content"></div>
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-<div id="page3" style="display: none;">
-    <h1>Liked</h1>
-</div>
-
-
-
-
-
-
-
-
-
-
-<!-- JavaScript -->
-<script>
-    // Function to show the selected page and hide the rest
-    function showPage(page) {
-        document.querySelectorAll('div[id^="page"]').forEach(div => {
-            div.style.display = 'none';  // Hide all pages
-        });
-
-        document.querySelector(`#${page}`).style.display = 'block';  // Show the selected page
-    }
-
-    // Add event listeners to buttons after the DOM has loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('button[data-page]').forEach(button => {
-            button.onclick = function() {
-                showPage(this.dataset.page);  // Show the page linked to the clicked button
-            }
-        });
-    });
-</script>
-
+  {% include 'sales/partials/filter_form.html' %}
 {% endblock %}
 
+{% block content %}
+<div class="container">
 
+  <!-- Botões de navegação entre abas -->
+  <div class="text-center my-4">
+    <button class="btn btn-outline-secondary mx-2" data-page="disliked">👎 Rejeitados</button>
+    <button class="btn btn-outline-primary mx-2" data-page="new">🆕 Novos</button>
+    <button class="btn btn-outline-success mx-2" data-page="liked">👍 Curtidos</button>
+  </div>
 
+  <!-- Aba: Rejeitados -->
+  <div id="disliked" class="property-tab hidden">
+    <h4 class="mb-3">👎 Imóveis Rejeitados</h4>
+    <div class="properties-container">
+      {% for property in imos_disliked %}
+        {% include 'sales/partials/property_card.html' with property=property %}
+      {% empty %}
+        <p class="text-muted">Você ainda não rejeitou nenhum imóvel.</p>
+      {% endfor %}
+    </div>
+  </div>
 
+  <!-- Aba: Novos -->
+  <div id="new" class="property-tab">
+    <h4 class="mb-3">🆕 Novos Imóveis</h4>
+    <div class="properties-container">
+      {% for property in imos %}
+        {% include 'sales/partials/property_card.html' with property=property %}
+      {% empty %}
+        <p class="text-muted">Nenhum imóvel disponível no momento.</p>
+      {% endfor %}
+    </div>
+  </div>
 
+  <!-- Aba: Curtidos -->
+  <div id="liked" class="property-tab hidden">
+    <h4 class="mb-3">👍 Imóveis Curtidos</h4>
+    <div class="properties-container">
+      {% for property in imos_liked %}
+        {% include 'sales/partials/property_card.html' with property=property %}
+      {% empty %}
+        <p class="text-muted">Você ainda não curtiu nenhum imóvel.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Imagens -->
+<div id="fullscreen-modal" class="fullscreen-modal hidden" onclick="closeFullscreen()">
+  <span class="close">&times;</span>
+  <div id="modal-content" class="modal-content"></div>
+</div>
+
+<!-- Estilo adicional -->
+<style>
+      .hidden {
+    display: none !important;
+  }
+
+  .property-tab {
+    margin-top: 1rem;
+  }
+
+  .properties-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+  }
+
+  /* 👉 Scroll horizontal para mobile */
+  @media (max-width: 768px) {
+    .properties-container {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      scroll-snap-type: x mandatory;
+    }
+
+    .property-card {
+      flex: 0 0 auto;
+      width: 80%;
+      scroll-snap-align: start;
+    }
+  }
+
+  /* ✨ Animação de entrada suave */
+  .property-card {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s ease forwards;
+  }
+
+  .property-card:nth-child(1) { animation-delay: 0s; }
+  .property-card:nth-child(2) { animation-delay: 0.1s; }
+  .property-card:nth-child(3) { animation-delay: 0.2s; }
+  .property-card:nth-child(4) { animation-delay: 0.3s; }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Modal fullscreen */
+  .fullscreen-modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.85);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  .fullscreen-modal.active {
+    display: flex !important;
+  }
+
+  .fullscreen-modal .modal-content img {
+    max-height: 90vh;
+    max-width: 90vw;
+  }
+
+  .fullscreen-modal .close {
+    position: absolute;
+    top: 20px; right: 30px;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  .fullscreen-modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.85);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  .fullscreen-modal.active {
+    display: flex !important;
+  }
+
+  .fullscreen-modal .modal-content img {
+    max-height: 90vh;
+    max-width: 90vw;
+  }
+
+  .fullscreen-modal .close {
+    position: absolute;
+    top: 20px; right: 30px;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+  }
+
+  .property-tab {
+    margin-top: 1rem;
+  }
+</style>
+
+<!-- Scripts de comportamento -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Alternância de abas
+    const buttons = document.querySelectorAll('button[data-page]');
+    const tabs = document.querySelectorAll('.property-tab');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        tabs.forEach(tab => tab.classList.add('hidden'));
+        const target = document.getElementById(button.dataset.page);
+        target.classList.remove('hidden');
+      });
+    });
+  });
+
+  // Modal de imagens
+  function showAllImages(div) {
+    const images = div.querySelectorAll('img');
+    const modalContent = document.getElementById('modal-content');
+    const modal = document.getElementById('fullscreen-modal');
+
+    modalContent.innerHTML = '';
+    images.forEach(img => {
+      const clone = img.cloneNode();
+      clone.classList.remove('hidden-image');
+      clone.style.margin = '0.5rem';
+      modalContent.appendChild(clone);
+    });
+
+    modal.classList.remove('hidden');
+    modal.classList.add('active');
+  }
+
+  function closeFullscreen() {
+    const modal = document.getElementById('fullscreen-modal');
+    modal.classList.remove('active');
+    modal.classList.add('hidden');
+  }
+</script>
+{% endblock %}

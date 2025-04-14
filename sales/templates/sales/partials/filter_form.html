@@ -1,0 +1,209 @@
+{% block filter %}
+<!-- Formulário de Filtro (Inicialmente Oculto) -->
+ <!-- Filter Form Container -->
+
+
+<div id="filter-form-container" class="filter-form-container hidden" method="GET" action="{% url 'sales:filter_properties' %}">
+
+    <div class="filter-form-content">
+
+    <form id="filter-form" class="filter-form" method="GET" action="{% url 'sales:filter_properties' %}">
+
+        <!-- Informações de Disponibilidade e Valores -->
+        <div class="filter-field">
+            <label for="min_price">Preço Mínimo:</label>
+            <input type="number" id="min_price" name="min_price" placeholder="Preço Mínimo">
+        </div>
+
+        <div class="filter-field">
+            <label for="max_price">Preço Máximo:</label>
+            <input type="number" id="max_price" name="max_price" placeholder="Preço Máximo">
+        </div>
+
+        <!-- Endereço do imóvel -->
+        <div class="filter-field">
+            <label for="location">Localização (Cidade ou Bairro):</label>
+            <input type="text" id="location" name="location" placeholder="Cidade ou Bairro">
+        </div>
+
+        <!-- Tipo de Imóvel -->
+        <div class="filter-field">
+            <label for="property_type">Tipo de Imóvel:</label>
+            <select id="property_type" name="property_type">
+                <option value="">Todos</option>
+                <option value="apartment">Apartamento</option>
+                <option value="house">Casa</option>
+                <option value="land">Lote</option>
+                <option value="farm">Fazenda</option>
+                <option value="wahehouse">Galpão</option>
+                <option value="commercial">Comercial</option>
+            </select>
+        </div>
+
+        <!-- Área útil e privativa -->
+        <div class="filter-field">
+            <label for="property_area_min">Área útil mínima (m²):</label>
+            <input type="number" id="property_area_min" name="property_area_min" placeholder="Área útil mínima (m²)">
+        </div>
+
+        <div class="filter-field">
+            <label for="property_area_max">Área útil máxima (m²):</label>
+            <input type="number" id="property_area_max" name="property_area_max" placeholder="Área útil máxima (m²)">
+        </div>
+
+        <div class="filter-field">
+            <label for="private_area_min">Área privativa mínima (m²):</label>
+            <input type="number" id="private_area_min" name="private_area_min" placeholder="Área privativa mínima (m²)">
+        </div>
+
+        <div class="filter-field">
+            <label for="private_area_max">Área privativa máxima (m²):</label>
+            <input type="number" id="private_area_max" name="private_area_max" placeholder="Área privativa máxima (m²)">
+        </div>
+
+        <!-- Características do imóvel -->
+        <div class="filter-field">
+            <label for="bedrooms">Dormitórios (incluindo suítes):</label>
+            <input type="number" id="bedrooms" name="bedrooms" placeholder="Dormitórios">
+        </div>
+
+        <div class="filter-field">
+            <label for="suites">Suítes:</label>
+            <input type="number" id="suites" name="suites" placeholder="Suítes">
+        </div>
+
+        <div class="filter-field">
+            <label for="bathrooms">Banheiros:</label>
+            <input type="number" id="bathrooms" name="bathrooms" placeholder="Banheiros">
+        </div>
+
+        <div class="filter-field">
+            <label for="garage_spots">Vagas de garagem:</label>
+            <input type="number" id="garage_spots" name="garage_spots" placeholder="Vagas de garagem">
+        </div>
+
+        <!-- Adereços e características -->
+        <div class="filter-field">
+            <label for="features">Adereços (separados por vírgula):</label>
+            <input type="text" id="features" name="features" placeholder="Ex: piscina, jardim">
+        </div>
+
+        <div class="filter-field">
+            <label for="is_covered">Cobertura:</label>
+            <select id="is_covered" name="is_covered">
+                <option value="">Todos</option>
+                <option value="yes">Sim</option>
+                <option value="no">Não</option>
+            </select>
+        </div>
+
+        <!-- Vagas de garagem e portaria -->
+        <div class="filter-field">
+            <label for="garage_type">Tipo de Vaga:</label>
+            <select id="garage_type" name="garage_type">
+                <option value="">Todos</option>
+                <option value="covered">Coberta</option>
+                <option value="free">Livre</option>
+                <option value="covered_and_free">Coberta e Livre</option>
+                <option value="none">Nem Coberta nem Livre</option>
+            </select>
+        </div>
+
+        <div class="filter-field">
+            <label for="has_pool">Piscina:</label>
+            <select id="has_pool" name="has_pool">
+                <option value="">Todos</option>
+                <option value="yes">Sim</option>
+                <option value="no">Não</option>
+            </select>
+        </div>
+
+        <div class="filter-field">
+            <label for="has_gatehouse">Portaria:</label>
+            <select id="has_gatehouse" name="has_gatehouse">
+                <option value="">Todos</option>
+                <option value="24h">24 h</option>
+                <option value="daytime">Diurna</option>
+                <option value="night">Noturna</option>
+                <option value="none">Sem portaria</option>
+            </select>
+        </div>
+
+        <!-- Condição do imóvel e acessibilidade -->
+        <div class="filter-field">
+            <label for="is_occupied">Ocupação:</label>
+            <select id="is_occupied" name="is_occupied">
+                <option value="">Todos</option>
+                <option value="vacant">Está vago</option>
+                <option value="owner">Proprietário mora</option>
+                <option value="tenant">Inquilino mora</option>
+            </select>
+        </div>
+
+        <div class="filter-field">
+            <label for="access">Acesso:</label>
+            <select id="access" name="access">
+                <option value="">Todos</option>
+                <option value="Key">Chave</option>
+                <option value="Biometry">Biometria</option>
+                <option value="Password">Senha</option>
+            </select>
+        </div>
+
+        <div class="filter-field">
+            <label for="accessibility">Acessibilidade:</label>
+            <select id="accessibility" name="accessibility">
+                <option value="">Todos</option>
+                <option value="yes">Sim</option>
+                <option value="no">Não</option>
+            </select>
+        </div>
+
+        <!-- Disponibilidade de mudança -->
+        <div class="filter-field">
+            <label for="move_availability">Disponibilidade de mudança:</label>
+            <select id="move_availability" name="move_availability">
+                <option value="">Todos</option>
+                <option value="immediate">Imediata</option>
+                <option value="30_days">30 dias</option>
+                <option value="60_days">60 dias</option>
+                <option value="other">Outro</option>
+            </select>
+        </div>
+
+        <!-- Valores adicionais -->
+        <div class="filter-field">
+            <label for="min_sale_price">Valor de venda mínimo:</label>
+            <input type="number" id="min_sale_price" name="min_sale_price" placeholder="Valor de venda mínimo">
+        </div>
+
+        <div class="filter-field">
+            <label for="max_sale_price">Valor de venda máximo:</label>
+            <input type="number" id="max_sale_price" name="max_sale_price" placeholder="Valor de venda máximo">
+        </div>
+
+        <div class="filter-field">
+            <label for="min_iptu_value">Valor de IPTU mínimo:</label>
+            <input type="number" id="min_iptu_value" name="min_iptu_value" placeholder="Valor de IPTU mínimo">
+        </div>
+
+        <div class="filter-field">
+            <label for="max_iptu_value">Valor de IPTU máximo:</label>
+            <input type="number" id="max_iptu_value" name="max_iptu_value" placeholder="Valor de IPTU máximo">
+        </div>
+
+        <div class="filter-field">
+            <label for="min_condo_fee">Valor do condomínio mínimo:</label>
+            <input type="number" id="min_condo_fee" name="min_condo_fee" placeholder="Valor do condomínio mínimo">
+        </div>
+
+        <div class="filter-field">
+            <label for="max_condo_fee">Valor do condomínio máximo:</label>
+            <input type="number" id="max_condo_fee" name="max_condo_fee" placeholder="Valor do condomínio máximo">
+        </div>
+
+        <button type="button" id="apply-filters">Aplicar Filtros</button>
+</form>
+</div>
+</div>
+{% endblock %}

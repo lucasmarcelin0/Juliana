@@ -1,0 +1,25 @@
+{% extends 'sales/layout.html' %}
+{% block title %}Painel Jurídico{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>📑 Painel da Advogada</h2>
+
+  {% if acordos %}
+    {% for acordo in acordos %}
+      <div class="card my-3">
+        <div class="card-body">
+          <h5 class="card-title">{{ acordo.property.street }}, {{ acordo.property.city }}</h5>
+          <p><strong>Comprador:</strong> {{ acordo.buyer.get_full_name }}</p>
+          <p><strong>Valor da proposta:</strong> R$ {{ acordo.bid.amount }}</p>
+          <p><strong>Status:</strong> {{ acordo.status }}</p>
+          <p><strong>Data:</strong> {{ acordo.date_closed|date:"d/m/Y H:i" }}</p>
+          <a href="#" class="btn btn-outline-primary disabled">Ver detalhes (em breve)</a>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <p>Nenhum acordo encontrado.</p>
+  {% endif %}
+</div>
+{% endblock %}

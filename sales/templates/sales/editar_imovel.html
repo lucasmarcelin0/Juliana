@@ -1,0 +1,23 @@
+{% extends 'sales/layout.html' %}
+
+{% block title %}Editar Imóvel{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Editar Imóvel: {{ property.street }}</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <h4>Imagens</h4>
+        {{ formset.management_form }}
+        {% for form in formset %}
+            {{ form.as_p }}
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary">Salvar alterações</button>
+    </form>
+
+    <a href="{% url 'sales:perfil' %}">← Voltar ao perfil</a>
+</div>
+{% endblock %}

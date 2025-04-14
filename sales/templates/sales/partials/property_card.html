@@ -1,4 +1,5 @@
-<div class="property-card shadow-sm rounded-4 border bg-white p-3 mb-4" id="property-{{ property.id }}" data-property-id="{{ property.id }}">
+<div class="property-card shadow-sm rounded-4 border bg-white p-3 mb-4"
+     id="property-{{ property.id }}" data-property-id="{{ property.id }}">
 
   <!-- Mídia -->
   <div class="property-media row g-3 mb-3 align-items-stretch">
@@ -7,31 +8,32 @@
         <img src="{{ property.images.first.image.url }}"
              class="img-fluid rounded shadow-sm w-100 property-thumbnail"
              data-images='[{% for img in property.images.all %}"{{ img.image.url }}"{% if not forloop.last %},{% endif %}{% endfor %}]'
-             style="cursor: pointer; max-height: 300px;">
+             style="cursor:pointer;max-height:300px;">
       {% else %}
-        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 220px;">
+        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height:220px;">
           <span class="text-muted">Sem imagem</span>
         </div>
       {% endif %}
     </div>
+
     <div class="col-md-6">
       {% if property.video_url %}
         <div class="ratio ratio-16x9 h-100">
           <iframe src="{{ property.video_url }}" class="w-100 h-100 rounded border" allowfullscreen></iframe>
         </div>
       {% else %}
-        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height: 220px;">
+        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="height:220px;">
           <span class="text-muted">Sem vídeo</span>
         </div>
       {% endif %}
     </div>
   </div>
 
-
   <!-- Infos principais -->
   <div class="property-info mb-3">
     <p class="mb-1"><i class="fas fa-map-marker-alt text-primary"></i>
-      <strong>{{ property.street }}, {{ property.street_number }}</strong> - {{ property.neighborhood }}, {{ property.city }} - {{ property.state }}
+      <strong>{{ property.street }}, {{ property.street_number }}</strong> -
+      {{ property.neighborhood }}, {{ property.city }} - {{ property.state }}
     </p>
     <p class="mb-1"><i class="fas fa-coins text-success"></i>
       <strong>R$ {{ property.sale_price|default:property.rent_price }}</strong>
@@ -45,13 +47,14 @@
 
   <!-- Ações -->
   <div class="d-flex justify-content-start gap-2 mb-3">
-    <button class="btn btn-outline-success btn-sm like-btn" data-id="{{ property.id }}">🔥 Curtir</button>
-    <button class="btn btn-outline-danger btn-sm dislike-btn" data-id="{{ property.id }}">💡 Rejeitar</button>
-    <button type="button" class="btn btn-outline-primary btn-sm" onclick="toggleDetails({{ property.id }})">📘 Detalhes</button>
+    <button class="btn btn-outline-success btn-sm like-btn"   data-id="{{ property.id }}">🔥 Curtir</button>
+    <button class="btn btn-outline-danger  btn-sm dislike-btn" data-id="{{ property.id }}">💡 Rejeitar</button>
+    <button class="btn btn-outline-primary btn-sm details-btn" data-id="{{ property.id }}">📘 Detalhes</button>
   </div>
 
   <!-- Detalhes -->
-  <div id="additional-info-{{ property.id }}" class="property-info hidden mt-3 border-top pt-3 small">
-    <!-- Detalhes vão aqui -->
+  <div id="additional-info-{{ property.id }}"
+       class="property-info hidden mt-3 border-top pt-3 small">
+    <!-- … seus detalhes … -->
   </div>
 </div>

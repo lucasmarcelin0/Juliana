@@ -8,18 +8,17 @@
 
 {% block content %}
 <div class="container">
-
-  <!-- Botões de navegação entre abas -->
+  <!-- Navegação por abas -->
   <div class="text-center my-4">
-    <button class="btn btn-outline-secondary mx-2" data-page="disliked">🖕 Rejeitados</button>
-    <button class="btn btn-outline-primary mx-2" data-page="new">🆕 Novos</button>
-    <button class="btn btn-outline-success mx-2" data-page="liked">🕊 Curtidos</button>
+    <button class="btn btn-outline-secondary mx-2" data-page="disliked">👎 Rejeitados</button>
+    <button class="btn btn-outline-primary  mx-2" data-page="new">🆕 Novos</button>
+    <button class="btn btn-outline-success  mx-2" data-page="liked">👍 Curtidos</button>
   </div>
 
-  <!-- Aba: Rejeitados -->
+  <!-- Aba Rejeitados -->
   <div id="disliked" class="property-tab hidden">
-    <h4 class="mb-3">🖕 Imóveis Rejeitados</h4>
-    <div class="properties-container">
+    <h4 class="mb-3">👎 Imóveis Rejeitados</h4>
+    <div class="properties-container" id="container-disliked">
       {% for property in imos_disliked %}
         {% include 'sales/partials/property_card.html' with property=property %}
       {% empty %}
@@ -28,10 +27,10 @@
     </div>
   </div>
 
-  <!-- Aba: Novos -->
+  <!-- Aba Novos -->
   <div id="new" class="property-tab">
     <h4 class="mb-3">🆕 Novos Imóveis</h4>
-    <div class="properties-container">
+    <div class="properties-container" id="container-new">
       {% for property in imos %}
         {% include 'sales/partials/property_card.html' with property=property %}
       {% empty %}
@@ -40,10 +39,10 @@
     </div>
   </div>
 
-  <!-- Aba: Curtidos -->
+  <!-- Aba Curtidos -->
   <div id="liked" class="property-tab hidden">
-    <h4 class="mb-3">🕊 Imóveis Curtidos</h4>
-    <div class="properties-container">
+    <h4 class="mb-3">👍 Imóveis Curtidos</h4>
+    <div class="properties-container" id="container-liked">
       {% for property in imos_liked %}
         {% include 'sales/partials/property_card.html' with property=property %}
       {% empty %}
@@ -53,7 +52,7 @@
   </div>
 </div>
 
-<!-- Modal de Imagens -->
+<!-- Modal Fullscreen -->
 <div id="fullscreen-modal" class="fullscreen-modal hidden">
   <span class="close">&times;</span>
   <button id="prev-image" class="nav-arrow">&#10094;</button>
@@ -61,218 +60,64 @@
   <button id="next-image" class="nav-arrow">&#10095;</button>
 </div>
 
-<!-- Estilo adicional -->
 <style>
-  .fullscreen-modal {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.85);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-  }
-
-  .fullscreen-modal.active {
-    display: flex !important;
-  }
-
-  .modal-content {
-    position: relative;
-    z-index: 10001;
-    max-width: 90vw;
-    max-height: 90vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .modal-content img {
-    max-width: 90vw;
-    max-height: 80vh;
-    border-radius: 10px;
-    animation: fadeIn 0.4s ease forwards;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
-  }
-
-  .nav-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 3rem;
-    color: white;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    z-index: 10000;
-    padding: 1rem;
-  }
-
-  #prev-image { left: 20px; }
-  #next-image { right: 20px; }
-
-  .close {
-    position: absolute;
-    top: 20px;
-    right: 30px;
-    color: white;
-    font-size: 2rem;
-    cursor: pointer;
-    z-index: 10002;
-  }
-
-  .hidden {
-    display: none !important;
-  }
-
-  .property-tab {
-    margin-top: 1rem;
-  }
-
-  .properties-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-  }
-
-  @media (max-width: 768px) {
-    .properties-container {
-      overflow-x: auto;
-      flex-wrap: nowrap;
-      scroll-snap-type: x mandatory;
-    }
-
-    .property-card {
-      flex: 0 0 auto;
-      width: 80%;
-      scroll-snap-align: start;
-    }
-  }
-
-  .property-card {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.6s ease forwards;
-  }
-
-  .property-card:nth-child(1) { animation-delay: 0s; }
-  .property-card:nth-child(2) { animation-delay: 0.1s; }
-  .property-card:nth-child(3) { animation-delay: 0.2s; }
-  .property-card:nth-child(4) { animation-delay: 0.3s; }
-
-  @keyframes fadeInUp {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+  .hidden{display:none!important}
+  .properties-container{display:flex;flex-wrap:wrap;gap:1.5rem}
+  @media(max-width:768px){.properties-container{overflow-x:auto;flex-wrap:nowrap;scroll-snap-type:x mandatory}.property-card{flex:0 0 auto;width:80%;scroll-snap-align:start}}
+  .property-card{opacity:0;transform:translateY(20px);animation:fadeInUp .6s forwards}
+  .property-card:nth-child(1){animation-delay:0s}.property-card:nth-child(2){animation-delay:.1s}.property-card:nth-child(3){animation-delay:.2s}.property-card:nth-child(4){animation-delay:.3s}
+  @keyframes fadeInUp{to{opacity:1;transform:translateY(0)}}
+  /* Modal */
+  .fullscreen-modal{position:fixed;inset:0;width:100vw;height:100vh;background:rgba(0,0,0,.9);display:none;justify-content:center;align-items:center;z-index:9999}
+  .fullscreen-modal.active{display:flex!important}
+  .modal-content{max-width:90vw;max-height:90vh;display:flex;justify-content:center;align-items:center}
+  .modal-content img{max-width:90vw;max-height:85vh;border-radius:10px;animation:fade .3s forwards}
+  @keyframes fade{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+  .nav-arrow{position:absolute;top:50%;transform:translateY(-50%);font-size:3rem;color:#fff;background:transparent;border:none;cursor:pointer;z-index:10000;padding:1rem}
+  #prev-image{left:15px}#next-image{right:15px}
+  .close{position:absolute;top:15px;right:25px;font-size:2rem;color:#fff;cursor:pointer;z-index:10001}
 </style>
 
-<!-- Scripts de comportamento -->
 <script>
-  let imageUrls = [];
-  let currentImageIndex = 0;
+let imageUrls=[],currentImageIndex=0;
 
-  document.addEventListener('DOMContentLoaded', function () {
-    const buttons = document.querySelectorAll('button[data-page]');
-    const tabs = document.querySelectorAll('.property-tab');
+function closeFullscreen(){const m=document.getElementById('fullscreen-modal');m.classList.add('hidden');m.classList.remove('active');imageUrls=[];currentImageIndex=0;document.getElementById('modal-content').innerHTML='';}
+function showImage(i){if(!imageUrls.length)return;const mc=document.getElementById('modal-content');if(i<0)i=imageUrls.length-1;if(i>=imageUrls.length)i=0;currentImageIndex=i;mc.innerHTML='';const img=document.createElement('img');img.src=imageUrls[currentImageIndex];mc.appendChild(img);}
 
-    buttons.forEach(button => {
-      button.addEventListener('click', () => {
-        tabs.forEach(tab => tab.classList.add('hidden'));
-        document.getElementById(button.dataset.page).classList.remove('hidden');
-      });
-    });
+document.addEventListener('DOMContentLoaded',()=>{
+  // Alternar abas
+  document.querySelectorAll('button[data-page]').forEach(btn=>btn.addEventListener('click',()=>{
+    document.querySelectorAll('.property-tab').forEach(t=>t.classList.add('hidden'));
+    document.getElementById(btn.dataset.page).classList.remove('hidden');
+  }));
 
-    document.querySelectorAll('.like-btn').forEach(btn => {
-      btn.addEventListener('click', function () {
-        const id = this.dataset.id;
-        fetch(`/like/${id}/`).then(r => r.json()).then(() => {
-          const card = document.getElementById(`property-${id}`);
-          card?.remove();
-        });
-      });
-    });
-
-    document.querySelectorAll('.dislike-btn').forEach(btn => {
-      btn.addEventListener('click', function () {
-        const id = this.dataset.id;
-        fetch(`/dislike/${id}/`).then(r => r.json()).then(() => {
-          const card = document.getElementById(`property-${id}`);
-          card?.remove();
-        });
-      });
-    });
-
-    document.querySelectorAll('.property-thumbnail').forEach(img => {
-      img.addEventListener('click', function () {
-        imageUrls = JSON.parse(this.dataset.images);
-        currentImageIndex = 0;
-        showImage(currentImageIndex);
-
-        const modal = document.getElementById('fullscreen-modal');
-        modal.classList.remove('hidden');
-        modal.classList.add('active');
-      });
-    });
-
-    document.getElementById('prev-image').addEventListener('click', function (e) {
-      e.stopPropagation();
-      showImage(currentImageIndex - 1);
-    });
-
-    document.getElementById('next-image').addEventListener('click', function (e) {
-      e.stopPropagation();
-      showImage(currentImageIndex + 1);
-    });
-
-    document.addEventListener('click', function (e) {
-      if (e.target.classList.contains('close')) {
-        e.stopPropagation();
-        closeFullscreen();
-      }
-
-      const modal = document.getElementById('fullscreen-modal');
-      if (e.target.id === 'fullscreen-modal') {
-        closeFullscreen();
-      }
-    });
-
-    document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') {
-        closeFullscreen();
-      }
-    });
+  // Delegação para like/dislike/details (funciona após mover card)
+  document.body.addEventListener('click',e=>{
+    // Curtir
+    if(e.target.closest('.like-btn')){
+      const btn=e.target.closest('.like-btn');const id=btn.dataset.id;fetch(`/like/${id}/`).then(r=>r.json()).then(()=>moveCard(id,'liked'));}
+    // Rejeitar
+    if(e.target.closest('.dislike-btn')){
+      const btn=e.target.closest('.dislike-btn');const id=btn.dataset.id;fetch(`/dislike/${id}/`).then(r=>r.json()).then(()=>moveCard(id,'disliked'));}
+    // Detalhes
+    if(e.target.closest('.details-btn')){
+      const id=e.target.closest('.details-btn').dataset.id;const sec=document.getElementById(`additional-info-${id}`);sec&&sec.classList.toggle('hidden');}
   });
 
-  function showImage(index) {
-    const modalContent = document.getElementById('modal-content');
-    if (!imageUrls.length) return;
+  // Abrir modal imagem
+  document.body.addEventListener('click',e=>{
+    const thumb=e.target.closest('.property-thumbnail');
+    if(thumb){imageUrls=JSON.parse(thumb.dataset.images);currentImageIndex=0;showImage(0);document.getElementById('fullscreen-modal').classList.remove('hidden','active');document.getElementById('fullscreen-modal').classList.add('active');}}
+  );
 
-    if (index < 0) index = imageUrls.length - 1;
-    if (index >= imageUrls.length) index = 0;
-    currentImageIndex = index;
+  // Modal controles
+  document.getElementById('prev-image').addEventListener('click',e=>{e.stopPropagation();showImage(currentImageIndex-1);});
+  document.getElementById('next-image').addEventListener('click',e=>{e.stopPropagation();showImage(currentImageIndex+1);});
+  document.querySelector('#fullscreen-modal .close').addEventListener('click',e=>{e.stopPropagation();closeFullscreen();});
+  document.getElementById('fullscreen-modal').addEventListener('click',e=>{if(e.target.id==='fullscreen-modal')closeFullscreen();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeFullscreen();});
+});
 
-    modalContent.innerHTML = '';
-    const img = document.createElement('img');
-    img.src = imageUrls[currentImageIndex];
-    modalContent.appendChild(img);
-  }
-
-  function closeFullscreen() {
-    const modal = document.getElementById('fullscreen-modal');
-    modal.classList.add('hidden');
-    modal.classList.remove('active');
-    imageUrls = [];
-    currentImageIndex = 0;
-    document.getElementById('modal-content').innerHTML = '';
-  }
+function moveCard(id,targetTab){const card=document.getElementById(`property-${id}`);if(!card)return;card.remove();const container=document.getElementById(`container-${targetTab}`);container.prepend(card);}
 </script>
-
 {% endblock %}

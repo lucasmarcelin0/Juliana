@@ -1,5 +1,5 @@
 <!-- templates/sales/partials/property_card.html -->
-<div class="property-card elevation-3 rounded-4 overflow-hidden bg-white position-relative"
+<div class="property-card shadow-lg rounded-4 overflow-hidden bg-white position-relative h-100 d-flex flex-column"
      id="property-{{ property.id }}" data-property-id="{{ property.id }}">
 
   <!-- Status Badges -->
@@ -23,7 +23,7 @@
         <img src="{{ property.images.first.image.url }}"
              class="img-fluid w-100 h-100 object-fit-cover property-thumbnail"
              data-images='[{% for img in property.images.all %}"{{ img.image.url }}"{% if not forloop.last %},{% endif %}{% endfor %}]'
-             alt="{{ property.street }}, {{ property.neighborhood }}"
+             alt="{{ property.street }}"
              style="cursor: pointer;">
         {% if property.images.count > 1 %}
           <div class="position-absolute bottom-0 end-0 mb-2 me-2">
@@ -37,7 +37,7 @@
   {% endif %}
 
   <!-- Property Details -->
-  <div class="property-details p-3">
+  <div class="property-details p-3 flex-grow-1 d-flex flex-column">
     <!-- Address -->
     <div class="d-flex align-items-start mb-2">
       <i class="fas fa-map-marker-alt text-primary mt-1 me-2"></i>
@@ -71,42 +71,54 @@
       <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">
         <i class="fas fa-car text-primary me-1"></i> {{ property.garage_spots }} vaga(s)
       </span>
+      {% if property.property_area %}
       <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">
-        <i class="fas fa-ruler-combined text-primary me-1"></i> {{ property.property_area|default:"-" }} m²
+        <i class="fas fa-ruler-combined text-primary me-1"></i> {{ property.property_area }} m²
       </span>
+      {% endif %}
     </div>
 
     <!-- Action Buttons -->
-    <div class="d-flex justify-content-between gap-2 border-top pt-3">
-      <button class="btn btn-outline-danger flex-grow-1 dislike-btn" data-id="{{ property.id }}">
-        <i class="far fa-thumbs-down me-1"></i> Rejeitar
-      </button>
-      <button class="btn btn-outline-primary flex-grow-1 details-btn" data-id="{{ property.id }}">
-        <i class="fas fa-info-circle me-1"></i> Detalhes
-      </button>
-      <button class="btn btn-success flex-grow-1 like-btn" data-id="{{ property.id }}">
-        <i class="far fa-thumbs-up me-1"></i> Curtir
+    <div class="mt-auto">
+      <div class="d-flex justify-content-between gap-2 border-top pt-3">
+        <button class="btn btn-outline-danger flex-grow-1 dislike-btn" data-id="{{ property.id }}">
+          <i class="far fa-thumbs-down me-1"></i> Rejeitar
+        </button>
+        <button class="btn btn-outline-primary flex-grow-1 details-btn" data-id="{{ property.id }}">
+          <i class="fas fa-info-circle me-1"></i> Detalhes
+        </button>
+        <button class="btn btn-success flex-grow-1 like-btn" data-id="{{ property.id }}">
+          <i class="far fa-thumbs-up me-1"></i> Curtir
+        </button>
+      </div>
+
+      <!-- Contact Agent Button -->
+      <button class="btn btn-dark w-100 mt-3 contact-agent-btn" data-property-id="{{ property.id }}">
+        <i class="fas fa-phone-alt me-2"></i> Falar com Corretor
       </button>
     </div>
-
-    <!-- Contact Agent Button -->
-    <button class="btn btn-dark w-100 mt-3 contact-agent-btn" data-property-id="{{ property.id }}">
-      <i class="fas fa-phone-alt me-2"></i> Falar com Corretor
-    </button>
   </div>
 
   <!-- Additional Details (Hidden) -->
-  <div id="additional-info-{{ property.id }}" class="property-more-details p-3 border-top" style="display: none;">
+  <div id="additional-info-{{ property.id }}" class="property-more-details p-3 border-top bg-light">
     <div class="row g-3">
       <!-- Features Column -->
       <div class="col-md-6">
         <h5 class="text-dark mb-3"><i class="fas fa-home me-2"></i> Características</h5>
         <ul class="list-unstyled">
-          <li class="mb-2"><strong>Área privativa:</strong> {{ property.private_area|default:"-" }} m²</li>
-          <li class="mb-2"><strong>Suítes:</strong> {{ property.suites|default:"-" }}</li>
+          {% if property.private_area %}
+          <li class="mb-2"><strong>Área privativa:</strong> {{ property.private_area }} m²</li>
+          {% endif %}
+          {% if property.suites %}
+          <li class="mb-2"><strong>Suítes:</strong> {{ property.suites }}</li>
+          {% endif %}
+          {% if property.get_garage_type_display %}
           <li class="mb-2"><strong>Tipo de vaga:</strong> {{ property.get_garage_type_display }}</li>
+          {% endif %}
           <li class="mb-2"><strong>Piscina:</strong> {{ property.has_pool|yesno:"Sim,Não" }}</li>
+          {% if property.get_has_gatehouse_display %}
           <li class="mb-2"><strong>Portaria:</strong> {{ property.get_has_gatehouse_display }}</li>
+          {% endif %}
         </ul>
       </div>
 
@@ -114,9 +126,15 @@
       <div class="col-md-6">
         <h5 class="text-dark mb-3"><i class="fas fa-file-invoice-dollar me-2"></i> Valores</h5>
         <ul class="list-unstyled">
-          <li class="mb-2"><strong>IPTU:</strong> R$ {{ property.iptu_value|default:"-" }}</li>
+          {% if property.iptu_value %}
+          <li class="mb-2"><strong>IPTU:</strong> R$ {{ property.iptu_value }}</li>
+          {% endif %}
+          {% if property.get_move_availability_display %}
           <li class="mb-2"><strong>Disponibilidade:</strong> {{ property.get_move_availability_display }}</li>
+          {% endif %}
+          {% if property.get_is_occupied_display %}
           <li class="mb-2"><strong>Condição:</strong> {{ property.get_is_occupied_display }}</li>
+          {% endif %}
           <li class="mb-2"><strong>Acessibilidade:</strong> {{ property.accessibility|yesno:"Sim,Não" }}</li>
         </ul>
       </div>
@@ -139,8 +157,8 @@
       {% if property.video_url %}
       <div class="col-12">
         <h5 class="text-dark mb-3"><i class="fas fa-video me-2"></i> Tour Virtual</h5>
-        <div class="ratio ratio-16x9 rounded-3 overflow-hidden">
-          <iframe src="{{ property.video_url }}" class="w-100 h-100" allowfullscreen></iframe>
+        <div class="ratio ratio-16x9 rounded-3 overflow-hidden bg-dark">
+          <iframe src="{{ property.video_url }}" class="w-100 h-100" allowfullscreen loading="lazy"></iframe>
         </div>
       </div>
       {% endif %}
@@ -156,7 +174,7 @@
 
 .property-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 
 .property-media {
@@ -173,7 +191,14 @@
 }
 
 .property-more-details {
-  background-color: #f9fafb;
+  display: none;
+  background-color: #f8f9fa;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; max-height: 0; }
+  to { opacity: 1; max-height: 1000px; }
 }
 
 .object-fit-cover {
@@ -182,6 +207,11 @@
 
 .badge {
   font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.badge:hover {
+  transform: translateY(-1px);
 }
 
 .contact-agent-btn {
@@ -192,55 +222,69 @@
   background-color: #343a40;
   transform: translateY(-2px);
 }
+
+.property-thumbnail {
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .property-features .badge {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.8rem;
+  }
+}
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Details toggle functionality - Fixed version
-  document.querySelectorAll('.details-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const propertyId = this.getAttribute('data-id');
-      const detailsSection = document.getElementById(`additional-info-${propertyId}`);
-      const icon = this.querySelector('i');
+  // Initialize all functionality
+  initPropertyCards();
+});
 
-      // Toggle display
-      if (detailsSection.style.display === 'none' || !detailsSection.style.display) {
-        detailsSection.style.display = 'block';
-        icon.classList.remove('fa-info-circle');
-        icon.classList.add('fa-times');
-        this.innerHTML = '<i class="fas fa-times me-1"></i> Fechar';
-      } else {
-        detailsSection.style.display = 'none';
-        icon.classList.remove('fa-times');
-        icon.classList.add('fa-info-circle');
-        this.innerHTML = '<i class="fas fa-info-circle me-1"></i> Detalhes';
-      }
-    });
-  });
-
-  // Contact agent button
-  document.querySelectorAll('.contact-agent-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const propertyId = this.getAttribute('data-property-id');
-      // Replace with your actual contact logic
-      alert(`Contato solicitado para o imóvel ID: ${propertyId}\nUm corretor entrará em contato em breve.`);
-    });
-  });
-
-  // Image click handler for carousel
+function initPropertyCards() {
+  // Details toggle functionality
   document.body.addEventListener('click', function(e) {
+    const detailsBtn = e.target.closest('.details-btn');
+    if (detailsBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const propertyId = detailsBtn.dataset.id;
+      const detailsSection = document.getElementById(`additional-info-${propertyId}`);
+
+      if (detailsSection) {
+        const isHidden = detailsSection.style.display === 'none' ||
+                        !detailsSection.style.display;
+
+        detailsSection.style.display = isHidden ? 'block' : 'none';
+
+        // Update button icon and text
+        const iconClass = isHidden ? 'fa-times' : 'fa-info-circle';
+        const btnText = isHidden ? 'Fechar' : 'Detalhes';
+        detailsBtn.innerHTML = `<i class="fas ${iconClass} me-1"></i> ${btnText}`;
+      }
+    }
+
+    // Contact agent button
+    const contactBtn = e.target.closest('.contact-agent-btn');
+    if (contactBtn) {
+      e.preventDefault();
+      const propertyId = contactBtn.dataset.propertyId;
+      alert(`Contato solicitado para o imóvel ID: ${propertyId}\nUm corretor entrará em contato em breve.`);
+    }
+
+    // Image click handler for carousel
     const thumb = e.target.closest('.property-thumbnail');
     if (thumb) {
       const images = JSON.parse(thumb.getAttribute('data-images'));
       openImageCarousel(images);
     }
   });
-});
+}
 
 function openImageCarousel(images) {
   // Your existing carousel implementation
   console.log('Opening carousel with images:', images);
-  // This should show your fullscreen carousel with all images
-  // Make sure this function is properly defined in your main JS file
+  // Implement your fullscreen carousel logic here
 }
 </script>

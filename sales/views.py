@@ -365,23 +365,29 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Property, Bid
 from .forms import BidForm
 
-@login_required
+# In your views.py, verify the queries
 def index(request):
     user = request.user
+    print(f"Total properties: {Property.objects.count()}")  # Debug count
 
-    # Recupera IDs dos imóveis curtidos e rejeitados pelo usuário
-    liked_ids = Property.objects.filter(likes=user).values_list('id', flat=True)
-    disliked_ids = Property.objects.filter(dislikes=user).values_list('id', flat=True)
+    liked_ids = list(Property.objects.filter(likes=user).values_list('id', flat=True))
+    disliked_ids = list(Property.objects.filter(dislikes=user).values_list('id', flat=True))
 
-    # Divide os imóveis nas três categorias, com prefetch para eficiência
-    imos_liked = Property.objects.filter(id__in=liked_ids).prefetch_related('images', 'bids')
-    imos_disliked = Property.objects.filter(id__in=disliked_ids).prefetch_related('images', 'bids')
-    imos = Property.objects.exclude(id__in=liked_ids).exclude(id__in=disliked_ids).prefetch_related('images', 'bids')
+    print(f"Liked IDs: {liked_ids}")  # Debug liked
+    print(f"Disliked IDs: {disliked_ids}")  # Debug disliked
+
+    imos_liked = Property.objects.filter(id__in=liked_ids).prefetch_related('images')
+    imos_disliked = Property.objects.filter(id__in=disliked_ids).prefetch_related('images')
+    imos = Property.objects.exclude(id__in=liked_ids).exclude(id__in=disliked_ids).prefetch_related('images')
+
+    print(f"New properties count: {imos.count()}")  # Debug counts
+    print(f"Liked properties count: {imos_liked.count()}")
+    print(f"Disliked properties count: {imos_disliked.count()}")
 
     return render(request, 'sales/index.html', {
-        'imos': imos,                    # imóveis ainda não avaliados
-        'imos_liked': imos_liked,        # curtidos
-        'imos_disliked': imos_disliked,  # rejeitados
+        'imos': imos,
+        'imos_liked': imos_liked,
+        'imos_disliked': imos_disliked,
     })
 
 

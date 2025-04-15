@@ -369,50 +369,19 @@ from .forms import BidForm
 def index(request):
     user = request.user
 
-    # Filtragem por curtidas/rejeições
-    imos_liked = Property.objects.filter(likes=user).prefetch_related('images', 'bids')
-    imos_disliked = Property.objects.filter(dislikes=user).prefetch_related('images', 'bids')
-    imos = Property.objects.exclude(likes=user).exclude(dislikes=user).prefetch_related('images', 'bids')
+    # Recupera IDs dos imóveis curtidos e rejeitados pelo usuário
+    liked_ids = Property.objects.filter(likes=user).values_list('id', flat=True)
+    disliked_ids = Property.objects.filter(dislikes=user).values_list('id', flat=True)
 
-    if request.method == 'POST':
-        # Submissão de lance
-        if 'amount' in request.POST:
-            bid_form = BidForm(request.POST)
-            property_id = request.POST.get('property_id')
-            property_instance = get_object_or_404(Property, id=property_id)
-
-            if bid_form.is_valid():
-                bid = bid_form.save(commit=False)
-                bid.user = user
-                bid.property = property_instance
-                bid.description = request.POST.get('payment_conditions')  # captura o tipo de pagamento
-                bid.save()
-                return redirect('sales:index')
-
-        # Decisão do proprietário
-        elif 'bid_action' in request.POST:
-            bid_id = request.POST.get('bid_id')
-            action = request.POST.get('bid_action')
-            bid = get_object_or_404(Bid, id=bid_id)
-
-            if action == 'accept':
-                bid.status = 'accepted'
-            elif action == 'refuse':
-                bid.status = 'refused'
-            elif action == 'counteroffer':
-                counter_amount = request.POST.get('counteroffer')
-                bid.status = 'counteroffer'
-                bid.counteroffer = counter_amount
-            bid.save()
-            return redirect('sales:index')
-
-    bid_form = BidForm()
+    # Divide os imóveis nas três categorias, com prefetch para eficiência
+    imos_liked = Property.objects.filter(id__in=liked_ids).prefetch_related('images', 'bids')
+    imos_disliked = Property.objects.filter(id__in=disliked_ids).prefetch_related('images', 'bids')
+    imos = Property.objects.exclude(id__in=liked_ids).exclude(id__in=disliked_ids).prefetch_related('images', 'bids')
 
     return render(request, 'sales/index.html', {
         'imos': imos,                    # imóveis ainda não avaliados
         'imos_liked': imos_liked,        # curtidos
         'imos_disliked': imos_disliked,  # rejeitados
-        'bid_form': bid_form,
     })
 
 

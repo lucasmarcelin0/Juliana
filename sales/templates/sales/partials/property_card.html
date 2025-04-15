@@ -246,10 +246,10 @@ function initPropertyCards() {
       const detailsSection = document.getElementById(`additional-info-${propertyId}`);
 
       if (detailsSection) {
-        const isHidden = detailsSection.style.display === 'none' ||
-                        !detailsSection.style.display;
+        const isHidden = detailsSection.classList.contains('hidden');
 
-        detailsSection.style.display = isHidden ? 'block' : 'none';
+        detailsSection.classList.toggle('hidden');
+
 
         // Update button icon and text
         const iconClass = isHidden ? 'fa-times' : 'fa-info-circle';

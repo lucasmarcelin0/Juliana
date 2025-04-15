@@ -252,9 +252,10 @@ function initPropertyCards() {
 
 
         // Update button icon and text
-        const iconClass = isHidden ? 'fa-times' : 'fa-info-circle';
-        const btnText = isHidden ? 'Fechar' : 'Detalhes';
+        const iconClass = isHidden ? 'fa-info-circle' : 'fa-times';
+        const btnText = isHidden ? 'Detalhes' : 'Fechar';
         detailsBtn.innerHTML = `<i class="fas ${iconClass} me-1"></i> ${btnText}`;
+
       }
     }
 

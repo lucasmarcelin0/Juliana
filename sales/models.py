@@ -227,11 +227,9 @@ class Deal(models.Model):
     buyer = models.ForeignKey(User, on_delete=models.CASCADE, related_name='deals', verbose_name="Comprador")
     date_closed = models.DateTimeField(auto_now_add=True, verbose_name="Data de Fechamento")
     status = models.CharField(max_length=50, choices=[('pending', 'Pendente'), ('closed', 'Fechado')], verbose_name="Status")
-    date_closed = models.DateTimeField(auto_now_add=True, verbose_name="Data de Fechamento")
-    status = models.CharField(max_length=50, choices=[('pending', 'Pendente'), ('closed', 'Fechado')], verbose_name="Status")
     closed_at = models.DateTimeField(null=True, blank=True, verbose_name="Fechado em")  # 👈 novo campo
 
 
     def __str__(self):
-        return f"Negócio para {self.property.title} - {self.status}"
+        return f"Negócio para {self.property} - {self.status}"
 

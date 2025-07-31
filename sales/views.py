@@ -370,8 +370,13 @@ def index(request):
     user = request.user
     print(f"Total properties: {Property.objects.count()}")  # Debug count
 
-    liked_ids = list(Property.objects.filter(likes=user).values_list('id', flat=True))
-    disliked_ids = list(Property.objects.filter(dislikes=user).values_list('id', flat=True))
+    # Anonymous users do not have id for ManyToMany lookups
+    if user.is_authenticated:
+        liked_ids = list(Property.objects.filter(likes=user).values_list('id', flat=True))
+        disliked_ids = list(Property.objects.filter(dislikes=user).values_list('id', flat=True))
+    else:
+        liked_ids = []
+        disliked_ids = []
 
     print(f"Liked IDs: {liked_ids}")  # Debug liked
     print(f"Disliked IDs: {disliked_ids}")  # Debug disliked

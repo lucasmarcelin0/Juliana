@@ -1,0 +1,14 @@
+# Ignore Python virtual environments
+juliana/bin/
+juliana/Lib/
+juliana/lib/
+juliana/lib64/
+juliana/Scripts/
+juliana/pyvenv.cfg
+
+# Bytecode
+__pycache__/
+*.pyc
+
+# SQLite database
+*.sqlite3

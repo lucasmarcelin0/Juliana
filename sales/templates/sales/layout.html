@@ -1,5 +1,3 @@
-{% load static %}
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -13,58 +11,260 @@
     <!-- FontAwesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-    <!-- Estilos personalizados -->
-    <link rel="stylesheet" href="{% static 'layout.css' %}">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
 
     <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            margin: 0;
-            background-color: #f9f9f9;
+        :root {
+            --primary-color: #1a6dcc;
+            --primary-dark: #1255a3;
+            --secondary-color: #2ecc71;
+            --accent-color: #ff6b6b;
+            --dark-color: #2c3e50;
+            --light-color: #f8f9fa;
+            --gray-light: #e9ecef;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
         }
 
-        header.top-navbar {
-            background-color: #ffffff;
-            padding: 12px 24px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        /* 🔝 Header/Navbar */
+        .top-navbar {
+            background-color: white;
+            padding: 15px 0;
+            box-shadow: var(--box-shadow);
             position: sticky;
             top: 0;
-            z-index: 999;
+            z-index: 1000;
         }
 
         .navbar-container {
             display: flex;
-            gap: 28px;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand-logo {
+            color: var(--primary-color);
+            font-size: 28px;
+        }
+
+        .brand-text {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 22px;
+            color: var(--dark-color);
+        }
+
+        .brand-subtext {
+            font-size: 14px;
+            color: #6c757d;
+            font-weight: 400;
+            margin-top: -4px;
+        }
+
+        .nav-items {
+            display: flex;
+            gap: 25px;
             align-items: center;
         }
 
-        .navbar-item a,
+        .navbar-item {
+            position: relative;
+        }
+
+        .navbar-item a, 
         .icon-button {
             text-decoration: none;
-            color: #333;
+            color: #555;
             font-size: 22px;
             background: none;
             border: none;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 5px 10px;
         }
 
-        .navbar-item a:hover,
+        .navbar-item a span, 
+        .icon-button span {
+            font-size: 12px;
+            font-weight: 500;
+            margin-top: 3px;
+            color: #6c757d;
+        }
+
+        .navbar-item a:hover, 
         .icon-button:hover {
-            color: #007BFF;
-            transform: scale(1.1);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .navbar-item a:hover span, 
+        .icon-button:hover span {
+            color: var(--primary-color);
+        }
+
+        /* 🔽 Main Content */
+        main {
+            flex: 1;
+            padding: 30px 20px;
+            max-width: 1200px;
+            margin: 20px auto;
+            width: 100%;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark-color);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 30px;
+            padding-right: 20px;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-color);
+            display: inline-block;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #bbb;
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #3a506b;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #bbb;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-icons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: #3a506b;
+            border-radius: 50%;
+            color: white;
+            transition: var(--transition);
+        }
+
+        .social-icons a:hover {
+            background: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .navbar-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-items {
+                width: 100%;
+                justify-content: space-around;
+            }
+            
+            .footer-section {
+                flex: 100%;
+            }
+            
+            .content-card {
+                padding: 20px;
+            }
         }
 
         .hidden {
             display: none;
-        }
-
-        main {
-            padding: 20px;
-            max-width: 1200px;
-            margin: auto;
         }
     </style>
 </head>
@@ -74,36 +274,92 @@
 <!-- 🔝 Navbar Superior -->
 <header class="top-navbar">
     <div class="navbar-container">
+        <a href="{% url 'sales:index' %}" class="brand">
+            <div class="brand-logo">
+                <i class="fas fa-home"></i>
+            </div>
+            <div>
+                <div class="brand-text">MajiMóveis</div>
+                <div class="brand-subtext">Imóveis Premium</div>
+            </div>
+        </a>
 
-        <!-- Ícone de Perfil -->
-        <div class="navbar-item" title="Perfil">
-            <a href="{% url 'sales:perfil' %}">
-                <i class="fas fa-user-circle"></i>
-            </a>
+        <div class="nav-items">
+            <!-- Ícone de Perfil -->
+            <div class="navbar-item" title="Perfil">
+                <a href="{% url 'sales:perfil' %}">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Perfil</span>
+                </a>
+            </div>
+
+            <!-- Botão de Filtro -->
+            <div class="navbar-item" title="Filtrar Imóveis">
+                <button class="icon-button" id="filter-toggle-btn">
+                    <i class="fas fa-search"></i>
+                    <span>Filtrar</span>
+                </button>
+            </div>
+
+            <!-- Adicionar Imóvel -->
+            <div class="navbar-item" title="Adicionar Imóvel">
+                <a href="{% url 'sales:cadastrar_imovel' %}">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Adicionar</span>
+                </a>
+            </div>
         </div>
-
-        <!-- Botão de Filtro (index ou abre filtro) -->
-        <div class="navbar-item" title="Filtrar Imóveis">
-            <button class="icon-button" id="filter-toggle-btn">
-                <i class="fas fa-search"></i>
-            </button>
-        </div>
-
-        <!-- Adicionar Imóvel -->
-        <div class="navbar-item" title="Adicionar Imóvel">
-            <a href="{% url 'sales:cadastrar_imovel' %}">
-                <i class="fas fa-plus-circle"></i>
-            </a>
-        </div>
-
     </div>
 </header>
 
 <!-- 🔽 Conteúdo Principal -->
 <main>
-    {% block filter %}{% endblock %}
-    {% block content %}{% endblock %}
+    <div class="content-card">
+        {% block filter %}{% endblock %}
+        {% block content %}{% endblock %}
+    </div>
 </main>
+
+<!-- Footer -->
+<footer>
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>Sobre Nós</h3>
+            <p>MajiMóveis oferece os melhores imóveis com qualidade premium e atendimento excepcional. Transformamos sonhos em realidade desde 2010.</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+        
+        <div class="footer-section">
+            <h3>Links Rápidos</h3>
+            <ul class="footer-links">
+                <li><a href="{% url 'sales:index' %}"><i class="fas fa-home"></i> Página Inicial</a></li>
+                <li><a href="#"><i class="fas fa-building"></i> Nossos Imóveis</a></li>
+                <li><a href="#"><i class="fas fa-map-marker-alt"></i> Localizações</a></li>
+                <li><a href="#"><i class="fas fa-newspaper"></i> Blog</a></li>
+                <li><a href="#"><i class="fas fa-phone-alt"></i> Contato</a></li>
+            </ul>
+        </div>
+        
+        <div class="footer-section">
+            <h3>Contato</h3>
+            <ul class="footer-links">
+                <li><a href="#"><i class="fas fa-map-marker-alt"></i> Av. Paulista, 1000 - São Paulo</a></li>
+                <li><a href="tel:+551199999999"><i class="fas fa-phone"></i> (11) 9999-9999</a></li>
+                <li><a href="mailto:contato@majimoveis.com"><i class="fas fa-envelope"></i> contato@majimoveis.com</a></li>
+                <li><a href="#"><i class="fas fa-clock"></i> Seg-Sex: 9:00 - 18:00</a></li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <p>&copy; 2023 MajiMóveis. Todos os direitos reservados.</p>
+    </div>
+</footer>
 
 <!-- Scripts -->
 <script>
@@ -127,6 +383,5 @@
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-QvEYBLETymFcpnSUsctNk6heAQ7Ez+KQEiC5EvhczFMMz9Yx8RJWb1x1o1tKTbmP" crossorigin="anonymous"></script>
-<script src="{% static 'sales/scripts.js' %}"></script>
 </body>
 </html>

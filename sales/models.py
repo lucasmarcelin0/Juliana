@@ -149,12 +149,12 @@ class Property(models.Model):
     free_description = models.TextField(verbose_name="Descrição livre", null=True, blank=True)
 
 
-def __str__(self):
-    # Access the full name from the User model via the get_full_name method
-    owner = ", ".join([owner.user.get_full_name() for owner in self.owner.all()])
-    if not owner:
-        owner = "Sem proprietário"  # In case no owner is assigned
-    return f"{owner} - {self.street}, {self.city}"
+    def __str__(self):
+        # Access the full name from the User model via the get_full_name method
+        owner = ", ".join([owner.user.get_full_name() for owner in self.owner.all()])
+        if not owner:
+            owner = "Sem proprietário"  # In case no owner is assigned
+        return f"{owner} - {self.street}, {self.city}"
 
 
 class PropertyImage(models.Model):

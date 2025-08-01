@@ -648,9 +648,37 @@
   document.addEventListener('DOMContentLoaded', function() {
     let currentStep = 1;
     const totalSteps = 4;
-    
+
     // Initialize form
     updateFormStep();
+
+    // Auto-preencher endereço a partir do CEP
+    const cepInput = document.getElementById('id_zip_code');
+    if (cepInput) {
+      cepInput.addEventListener('blur', function() {
+        const cep = this.value.replace(/\D/g, '');
+        if (cep.length === 8) {
+          fetch(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(response => response.json())
+            .then(data => {
+              if (!data.erro) {
+                const streetField = document.getElementById('id_street');
+                const neighborhoodField = document.getElementById('id_neighborhood');
+                const cityField = document.getElementById('id_city');
+                const stateField = document.getElementById('id_state');
+
+                if (streetField && !streetField.value) streetField.value = data.logradouro || '';
+                if (neighborhoodField && !neighborhoodField.value) neighborhoodField.value = data.bairro || '';
+                if (cityField && !cityField.value) cityField.value = data.localidade || '';
+                if (stateField && !stateField.value) stateField.value = data.uf || '';
+              } else {
+                console.error('CEP não encontrado.');
+              }
+            })
+            .catch(error => console.error('Erro ao buscar CEP:', error));
+        }
+      });
+    }
     
     // Next button click handler
     document.querySelector('.btn-next').addEventListener('click', function() {

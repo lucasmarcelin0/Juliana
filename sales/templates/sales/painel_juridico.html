@@ -14,7 +14,7 @@
           <p><strong>Valor da proposta:</strong> R$ {{ acordo.bid.amount }}</p>
           <p><strong>Status:</strong> {{ acordo.status }}</p>
           <p><strong>Data:</strong> {{ acordo.date_closed|date:"d/m/Y H:i" }}</p>
-          <a href="#" class="btn btn-outline-primary disabled">Ver detalhes (em breve)</a>
+          <a href='{% url 'sales:acordo_detalhes' acordo.id %}' class='btn btn-outline-primary'>Ver detalhes</a>
         </div>
       </div>
     {% endfor %}

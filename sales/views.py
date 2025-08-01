@@ -9,8 +9,6 @@ from .forms import BidForm, PropertyForm, PropertyImageFormSet, DealStepForm
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 
-from django.db.models import Q
-from django.http import JsonResponse
 
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -149,16 +147,6 @@ def painel_juridico(request):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
-
-@login_required
-def painel_juridico(request):
-    if not hasattr(request.user, 'userprofile') or request.user.userprofile.role != 'advogada':
-        return redirect('sales:index')  # ou 403 Forbidden
-
-    # Se chegou aqui, é advogada
-    acordos = Deal.objects.all()
-    return render(request, 'sales/painel_juridico.html', {'acordos': acordos})
-
 
 
 @login_required
@@ -359,11 +347,6 @@ def filter_properties(request):
 
 
 
-
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Property, Bid
-from .forms import BidForm
 
 # In your views.py, verify the queries
 def index(request):

@@ -397,7 +397,12 @@
       const like = e.target.closest('.like-btn');
       if (like) {
         const id = like.dataset.id;
-        fetch(`/like/${id}/`).then(() => moveCard(id, 'liked'));
+        fetch(`/like/${id}/`)
+          .then(r => r.json())
+          .then(data => {
+            const target = data.liked ? 'liked' : 'new';
+            moveCard(id, target);
+          });
         return;
       }
 
@@ -405,7 +410,12 @@
       const dislike = e.target.closest('.dislike-btn');
       if (dislike) {
         const id = dislike.dataset.id;
-        fetch(`/dislike/${id}/`).then(() => moveCard(id, 'disliked'));
+        fetch(`/dislike/${id}/`)
+          .then(r => r.json())
+          .then(data => {
+            const target = data.disliked ? 'disliked' : 'new';
+            moveCard(id, target);
+          });
         return;
       }
 

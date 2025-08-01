@@ -2,6 +2,12 @@ from django import forms
 from .models import Bid, Property, PropertyImage, DealStep
 from django.forms.models import inlineformset_factory
 
+
+class ClearableMultipleFileInput(forms.ClearableFileInput):
+    """Allow selecting multiple files in a clearable file input."""
+
+    allow_multiple_selected = True
+
 class DealStepForm(forms.ModelForm):
     class Meta:
         model = DealStep
@@ -27,7 +33,7 @@ class BidForm(forms.ModelForm):
 
 class PropertyForm(forms.ModelForm):
     images = forms.ImageField(
-        widget=forms.ClearableFileInput(attrs={'multiple': True}),
+        widget=ClearableMultipleFileInput(),
         required=False,
         label="Fotos do Imóvel"
     )

@@ -413,7 +413,20 @@
       if (details) {
         const id = details.dataset.id;
         const sec = document.getElementById(`additional-info-${id}`);
-        if (sec) sec.classList.toggle('hidden');
+        if (sec) {
+          const isHidden = sec.classList.toggle('hidden');
+          const iconClass = isHidden ? 'fa-info-circle' : 'fa-times';
+          const btnText = isHidden ? 'Detalhes' : 'Fechar';
+          details.innerHTML = `<i class="fas ${iconClass} me-1"></i> ${btnText}`;
+        }
+        return;
+      }
+
+      /* Contato */
+      const contact = e.target.closest('.contact-agent-btn');
+      if (contact) {
+        const propertyId = contact.dataset.propertyId;
+        alert(`Contato solicitado para o imóvel ID: ${propertyId}\nUm corretor entrará em contato em breve.`);
         return;
       }
 

@@ -296,14 +296,12 @@ function initPropertyCards() {
     const thumb = e.target.closest('.property-thumbnail');
     if (thumb) {
       const images = JSON.parse(thumb.getAttribute('data-images'));
-      openImageCarousel(images);
+      if (typeof openFullscreen === "function") {
+        openFullscreen(thumb);
+      } else if (typeof openFullscreenModal === "function") {
+        openFullscreenModal(thumb);
+      }
     }
   });
 }
 
-function openImageCarousel(images) {
-  // Your existing carousel implementation
-  console.log('Opening carousel with images:', images);
-  // Implement your fullscreen carousel logic here
-}
-</script>

@@ -376,7 +376,8 @@
   let currentImageIndex = 0;
   let isModalOpen = false;
 
-  document.addEventListener('DOMContentLoaded', () => {
+  // Run setup immediately because this script is placed after the HTML
+  // content and the DOM is already loaded when it executes.
     /* --------- Alternar abas --------- */
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -466,7 +467,6 @@
         showImage(currentImageIndex + 1);
       }
     });
-  });
 
   /* ---------- helpers ---------- */
   function moveCard(id, target) {

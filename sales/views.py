@@ -182,13 +182,18 @@ def editar_imovel(request, property_id):
 @login_required
 def cadastrar_imovel(request):
     if request.method == 'POST':
-        form = PropertyForm(request.POST)
+        form = PropertyForm(request.POST, request.FILES)
         if form.is_valid():
             new_property = form.save(commit=False)
             # Associa o corretor automaticamente como dono
             property_owner, _ = PropertyOwner.objects.get_or_create(user=request.user)
             new_property.save()
             new_property.owner.add(property_owner)
+
+            # Salva imagens enviadas
+            for image in request.FILES.getlist('images'):
+                PropertyImage.objects.create(property=new_property, image=image)
+
             return redirect('sales:perfil')
     else:
         form = PropertyForm()

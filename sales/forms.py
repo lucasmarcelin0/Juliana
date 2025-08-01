@@ -26,9 +26,15 @@ class BidForm(forms.ModelForm):
 
 
 class PropertyForm(forms.ModelForm):
+    images = forms.ImageField(
+        widget=forms.ClearableFileInput(attrs={'multiple': True}),
+        required=False,
+        label="Fotos do Imóvel"
+    )
+
     class Meta:
         model = Property
-        exclude = ['likes', 'dislikes', 'owner', 'images']
+        exclude = ['likes', 'dislikes', 'owner']
         widgets = {
             'features': forms.Textarea(attrs={'rows': 2}),
             'free_description': forms.Textarea(attrs={'rows': 4}),
